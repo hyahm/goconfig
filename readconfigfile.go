@@ -48,6 +48,15 @@ func ReadInt16(key string) int16 {
 	return int16(ReadInt(key))
 }
 
+func ReadUInt64(key string) uint64 {
+	i, err := strconv.ParseUint(ConfigKeyValue[key], 10, 64)
+	if err != nil {
+		fmt.Println(err.Error())
+		return 0
+	}
+	return i
+}
+
 // 2边需要用到引号
 func ReadPassword(key string) string {
 	v := ConfigKeyValue[key]
