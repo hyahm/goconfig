@@ -122,11 +122,9 @@ func ReadMap(key string) map[string]interface{} {
 
 				if k == "" {
 					fmt.Println("key 值不能为空")
-					fmt.Println("key:%s is not an right format", "key")
 				}
 			} else {
 				fmt.Println("key 缺少双引号或者没有值")
-				fmt.Println("key:%s is not an right format", "key")
 				return nil
 			}
 
@@ -167,7 +165,6 @@ func ReadMap(key string) map[string]interface{} {
 
 	} else {
 		fmt.Println("头尾缺少大括号")
-		fmt.Println("key:%s is not an right format", "key")
 		return nil
 	}
 
@@ -194,7 +191,7 @@ func ReadIntArray(key string) []int {
 		}
 		return il
 	} else {
-		log.Fatal("key:%s,not an int array format \n", key)
+		log.Fatalf("key:%s,not an int array format \n", key)
 	}
 	return il
 }
@@ -228,7 +225,7 @@ func ReadStringArray(key string) []string {
 		}
 		return sl
 	} else {
-		log.Fatal("key:%s,not an int array format \n", key)
+		log.Fatalf("key:%s,not an int array format \n", key)
 	}
 	return sl
 }

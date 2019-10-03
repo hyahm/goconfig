@@ -16,7 +16,9 @@ const SEP = "=" // key 和 value 分隔符
 
 var ConfigPath string // 配置文件路径，保存后方便重新加载配置文件
 var ConfigKeyValue map[string]string
-var NOTE = "#[" // #和[开头的为注释
+var NOTE = "#" // #开头的为注释
+var MODEL_START = "[" // [开头的为注释
+var MODEL_END = "]" // [开头的为注释
 
 // 读取配置文件
 
@@ -62,6 +64,7 @@ func LoopKey() {
 
 	//换行符切割字符串
 	ConfigKeyValue = make(map[string]string, 0)
+	modelname := ""
 	for i := 0; i < len(bs); i++ {
 		//fmt.Println()
 
@@ -70,12 +73,18 @@ func LoopKey() {
 		//去掉2边的空格
 		sbs := strings.Trim(bs[i], " ")
 		//  #开头是注释， [ 开头是模块 , 空行
-		if sbs == "" || strings.ContainsAny(sbs[0:1], NOTE) {
+		if sbs == "" || sbs[0:1] == NOTE {
 			continue
 		}
+		//模块的话
+		if sbs[0:1] == MODEL_START && sbs[len(sbs)-1:] == MODEL_END {
+			modelname = sbs[1:len(sbs)-1]
+			continue
+		}
+
 		index := strings.Index(sbs, SEP)
 		key := strings.Trim(sbs[:index], " ")
-
+		key = fmt.Sprintf("%s.%s",modelname, key)
 		if _, ok := ConfigKeyValue[key]; ok {
 			log.Fatal(fmt.Sprintf("key:%s duplicate，line:%d \n", key, line))
 		} else {
