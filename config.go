@@ -45,6 +45,15 @@ func InitConf(configpath string) {
 	LoopKey()
 }
 
+func Print() {
+	if ConfigKeyValue == nil {
+		panic("not init")
+	}
+	for k,v := range ConfigKeyValue {
+		log.Printf("key: %s ---- value: %s", k, v)
+	}
+}
+
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func LoopKey() {
 	var err error
@@ -84,7 +93,10 @@ func LoopKey() {
 
 		index := strings.Index(sbs, SEP)
 		key := strings.Trim(sbs[:index], " ")
-		key = fmt.Sprintf("%s.%s",modelname, key)
+		if modelname != "" {
+			key = fmt.Sprintf("%s.%s",modelname, key)
+		}
+
 		if _, ok := ConfigKeyValue[key]; ok {
 			log.Fatal(fmt.Sprintf("key:%s duplicate，line:%d \n", key, line))
 		} else {
