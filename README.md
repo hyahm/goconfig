@@ -31,7 +31,20 @@ goconfig.LoopKey()
 ```
 ### 配置文件说明
 文件是key = value 的格式, 必须写一行
-- [ 和 # 开头的都是注释
+- # 开头的都是注释
+- []指定模块名， 一直都到一下[]， 可以为空， 带模块的的key 使用 模块名+.+key 作为key 获取值, eg:  
+```
+[admin]
+aaa=bbb
+cc=ddd
+[]
+one=2323
+获取上面3个值得key 分别是
+
+admin.aaa
+admin.cc
+one
+```
 - key 不能有 = 符号, 这个是区分key和value的, 会使用第一个 = 号做区分
 - map类型 {"key": value} 格式
 - key 有重复会报错提示 哪个key 重复了
