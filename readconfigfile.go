@@ -104,6 +104,9 @@ func ReadMap(key string) map[string]interface{} {
 
 		// 逗号分开组
 		sl := strings.Split(newstr, ",")
+		if sl[0] == "" {
+			return kv
+		}
 		for _, v := range sl {
 			// 去头尾空格
 			var k string
@@ -178,7 +181,7 @@ func ReadIntArray(key string) []int {
 	if vl[0:1] == "[" && vl[vlength-1:vlength] == "]" {
 		vlist := strings.Split(vl[1:vlength-1], ",")
 		//如果没值就返回空数组
-		if len(vlist) == 0 {
+		if vlist[0] == "" {
 			return il
 		}
 		for _, v := range vlist {
@@ -203,7 +206,7 @@ func ReadStringArray(key string) []string {
 	if vl[0:1] == "[" && vl[vlength-1:vlength] == "]" {
 		vlist := strings.Split(vl[1:vlength-1], ",")
 		//如果没值就返回空数组
-		if len(vlist) == 0 {
+		if vlist[0] == "" {
 			return sl
 		}
 		for _, v := range vlist {
