@@ -1,7 +1,6 @@
 package goconfig
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -23,11 +22,7 @@ var MODEL_END = "]" // [开头的为注释
 // 读取配置文件
 
 func InitConf(configpath string) {
-	fp := flag.String("conf", configpath, "specify configfile path")
-
-	flag.Parse()
-
-	fptmp := *fp
+	fptmp := configpath
 	fptmp = filepath.Clean(fptmp)
 	//判断是相对路径还是绝对路径
 
