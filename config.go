@@ -10,9 +10,9 @@ import (
 //const middle = "========="
 const SEP = "=" // key 和 value 分隔符
 
-var ConfigPath string // 配置文件路径，保存后方便重新加载配置文件
+var configPath string // 配置文件路径，保存后方便重新加载配置文件
 var file *os.File
-var ConfigKeyValue map[string]string
+var configKeyValue map[string]string
 
 const NOTE = "#"        // #开头的为注释
 const MODEL_START = "[" // [开头的为注释
@@ -21,7 +21,7 @@ const MODEL_END = "]"   // [开头的为注释
 // 读取配置文件
 
 func InitConf(configpath string) {
-	ConfigKeyValue = make(map[string]string)
+	configKeyValue = make(map[string]string)
 	fptmp := configpath
 	fptmp = filepath.Clean(fptmp)
 	//判断是相对路径还是绝对路径
@@ -37,16 +37,16 @@ func InitConf(configpath string) {
 		panic(err)
 	}
 	defer file.Close()
-	ConfigPath = fptmp
+	configPath = fptmp
 
 	readlines()
 }
 
 func Print() {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		fmt.Println()
 	}
-	for k, v := range ConfigKeyValue {
+	for k, v := range configKeyValue {
 		log.Printf("key: %s ---- value: %s \n", k, v)
 	}
 }

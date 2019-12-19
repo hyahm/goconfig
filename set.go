@@ -8,7 +8,7 @@ import (
 )
 
 func SetFloat(key string, value float64, notes ...string) float64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s1 := strconv.FormatFloat(value, 'E', -1, 64)
@@ -17,7 +17,7 @@ func SetFloat(key string, value float64, notes ...string) float64 {
 }
 
 func SetFile(key string, value string, notes ...string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	// 读取文件
@@ -30,7 +30,7 @@ func SetFile(key string, value string, notes ...string) string {
 }
 
 func SetString(key string, value string, notes ...string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	update(key, value)
@@ -39,7 +39,7 @@ func SetString(key string, value string, notes ...string) string {
 
 // 返回int
 func SetInt(key string, value int, notes ...string) int {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s := strconv.Itoa(value)
@@ -48,7 +48,7 @@ func SetInt(key string, value int, notes ...string) int {
 }
 
 func SetUint64(key string, value uint64, notes ...string) uint64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s := strconv.FormatUint(value, 10)
@@ -58,7 +58,7 @@ func SetUint64(key string, value uint64, notes ...string) uint64 {
 
 // 2边需要用到引号
 func SetPassword(key string, value string, notes ...string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s := fmt.Sprintf(`"%s"`, value)
@@ -67,7 +67,7 @@ func SetPassword(key string, value string, notes ...string) string {
 }
 
 func SetBool(key string, value bool, notes ...string) bool {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s := "false"
@@ -79,7 +79,7 @@ func SetBool(key string, value bool, notes ...string) bool {
 }
 
 func SetInt64(key string, value int64, notes ...string) int64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s := strconv.FormatInt(value, 10)
@@ -88,7 +88,7 @@ func SetInt64(key string, value int64, notes ...string) int64 {
 }
 
 func SetJson(key string, value interface{}, notes ...string) interface{} {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	s, err := json.Marshal(value)

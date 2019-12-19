@@ -128,12 +128,12 @@ func getKey() {
 		if v.Module != "" {
 			key = v.Module + "." + key
 		}
-		if _, ok := ConfigKeyValue[key]; ok {
+		if _, ok := configKeyValue[key]; ok {
 			// 去掉重复项
 			continue
 		}
 
-		ConfigKeyValue[key] = value
+		configKeyValue[key] = value
 		v.Value = []byte(value)
 		tmp = append(tmp, v)
 	}
@@ -234,7 +234,7 @@ func writeFile(key, value, module string, notes ...string) {
 		}
 
 	}
-	if err := ioutil.WriteFile(ConfigPath, fileData, 0644); err != nil {
+	if err := ioutil.WriteFile(configPath, fileData, 0644); err != nil {
 		panic(err)
 	}
 }

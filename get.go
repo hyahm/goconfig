@@ -6,14 +6,14 @@ import (
 )
 
 func GetFloat(key string) float64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
 	// key 不能包含多个.
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return 0
 	}
-	f64, err := strconv.ParseFloat(ConfigKeyValue[key], 64)
+	f64, err := strconv.ParseFloat(configKeyValue[key], 64)
 	if err != nil {
 		return 0
 	}
@@ -21,14 +21,14 @@ func GetFloat(key string) float64 {
 }
 
 func GetFile(key string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return ""
 	}
 	// 读取文件
-	bs, err := ioutil.ReadFile(ConfigKeyValue[key])
+	bs, err := ioutil.ReadFile(configKeyValue[key])
 	if err != nil {
 		return ""
 	}
@@ -36,24 +36,24 @@ func GetFile(key string) string {
 }
 
 func GetString(key string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return ""
 	}
-	return ConfigKeyValue[key]
+	return configKeyValue[key]
 }
 
 // 返回int
 func GetInt(key string) int {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return 0
 	}
-	i, err := strconv.Atoi(ConfigKeyValue[key])
+	i, err := strconv.Atoi(configKeyValue[key])
 	if err != nil {
 		return 0
 	}
@@ -61,10 +61,10 @@ func GetInt(key string) int {
 }
 
 func GetInt16(key string) int16 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return 0
 	}
 	i := GetInt(key)
@@ -76,13 +76,13 @@ func GetInt16(key string) int16 {
 }
 
 func GetUint64(key string) uint64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return 0
 	}
-	i, err := strconv.ParseUint(ConfigKeyValue[key], 10, 64)
+	i, err := strconv.ParseUint(configKeyValue[key], 10, 64)
 	if err != nil {
 		return 0
 	}
@@ -91,13 +91,13 @@ func GetUint64(key string) uint64 {
 
 // 2边需要用到引号
 func GetPassword(key string) string {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return ""
 	}
-	v := ConfigKeyValue[key]
+	v := configKeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0]) != "\"" || string(v[l-1:]) != "\"" {
@@ -107,14 +107,14 @@ func GetPassword(key string) string {
 }
 
 func GetBool(key string) bool {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return false
 	}
-	if _, ok := ConfigKeyValue[key]; ok {
-		if ConfigKeyValue[key] == "true" {
+	if _, ok := configKeyValue[key]; ok {
+		if configKeyValue[key] == "true" {
 			return true
 		} else {
 			return false
@@ -124,13 +124,13 @@ func GetBool(key string) bool {
 }
 
 func GetInt64(key string) int64 {
-	if ConfigKeyValue == nil {
+	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := ConfigKeyValue[key]; !ok {
+	if _, ok := configKeyValue[key]; !ok {
 		return 0
 	}
-	i, err := strconv.ParseInt(ConfigKeyValue[key], 10, 64)
+	i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
 	if err != nil {
 		return 0
 	}
