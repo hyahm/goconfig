@@ -9,7 +9,7 @@ import (
 )
 
 func ReadFloat(key string) float64 {
-	f64, err := strconv.ParseFloat(ConfigKeyValue[key], 64)
+	f64, err := strconv.ParseFloat(configKeyValue[key], 64)
 	if err != nil {
 		return 0
 	}
@@ -17,7 +17,8 @@ func ReadFloat(key string) float64 {
 }
 
 func ReadFile(key string) string {
-	bs, err := ioutil.ReadFile(ConfigKeyValue[key])
+	// 读取文件
+	bs, err := ioutil.ReadFile(configKeyValue[key])
 	if err != nil {
 		return ""
 	}
@@ -25,12 +26,12 @@ func ReadFile(key string) string {
 }
 
 func ReadString(key string) string {
-	return ConfigKeyValue[key]
+	return configKeyValue[key]
 }
 
 // 返回int
 func ReadInt(key string) int {
-	i, err := strconv.Atoi(ConfigKeyValue[key])
+	i, err := strconv.Atoi(configKeyValue[key])
 	if err != nil {
 		fmt.Println(err.Error())
 		return 0
@@ -49,7 +50,7 @@ func ReadInt16(key string) int16 {
 }
 
 func ReadUint64(key string) uint64 {
-	i, err := strconv.ParseUint(ConfigKeyValue[key], 10, 64)
+	i, err := strconv.ParseUint(configKeyValue[key], 10, 64)
 	if err != nil {
 		fmt.Println(err.Error())
 		return 0
@@ -59,7 +60,7 @@ func ReadUint64(key string) uint64 {
 
 // 2边需要用到引号
 func ReadPassword(key string) string {
-	v := ConfigKeyValue[key]
+	v := configKeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0]) != "\"" || string(v[l-1:]) != "\"" {
@@ -70,19 +71,19 @@ func ReadPassword(key string) string {
 }
 
 func ReadBool(key string) bool {
-	if _, ok := ConfigKeyValue[key]; ok {
-		if ConfigKeyValue[key] == "true" {
+	if _, ok := configKeyValue[key]; ok {
+		if configKeyValue[key] == "true" {
 			return true
 		} else {
 			return false
 		}
 	}
-	fmt.Printf("key: %s, value:%s \n", key, ConfigKeyValue[key])
+	fmt.Printf("key: %s, value:%s \n", key, configKeyValue[key])
 	return false
 }
 
 func ReadInt64(key string) int64 {
-	i, err := strconv.ParseInt(ConfigKeyValue[key], 10, 64)
+	i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
 	if err != nil {
 		fmt.Println(err.Error())
 		return 0
@@ -92,7 +93,7 @@ func ReadInt64(key string) int64 {
 
 func ReadMap(key string) map[string]interface{} {
 	// value only three format
-	x := ConfigKeyValue[key]
+	x := configKeyValue[key]
 	//x := `{"asdf":"ajsdfkl","type":6,"has":true}`
 
 	l := len(x)
@@ -176,7 +177,7 @@ func ReadMap(key string) map[string]interface{} {
 
 func ReadIntArray(key string) []int {
 	il := make([]int, 0)
-	vl := ConfigKeyValue[key]
+	vl := configKeyValue[key]
 	vlength := len(vl)
 	if vl[0:1] == "[" && vl[vlength-1:vlength] == "]" {
 		vlist := strings.Split(vl[1:vlength-1], ",")
@@ -201,7 +202,7 @@ func ReadIntArray(key string) []int {
 
 func ReadStringArray(key string) []string {
 	sl := make([]string, 0)
-	vl := ConfigKeyValue[key]
+	vl := configKeyValue[key]
 	vlength := len(vl)
 	if vl[0:1] == "[" && vl[vlength-1:vlength] == "]" {
 		vlist := strings.Split(vl[1:vlength-1], ",")
