@@ -1,7 +1,6 @@
 package goconfig
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -44,7 +43,7 @@ func InitConf(configpath string) {
 
 func Print() {
 	if configKeyValue == nil {
-		fmt.Println()
+		panic("init first")
 	}
 	for k, v := range configKeyValue {
 		log.Printf("key: %s ---- value: %s \n", k, v)

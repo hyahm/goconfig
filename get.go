@@ -107,7 +107,6 @@ func ReadUint64(key string, value ...uint64) uint64 {
 
 // 2边需要用到引号
 func ReadPassword(key string, value ...string) string {
-	fmt.Println(configKeyValue)
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -120,13 +119,11 @@ func ReadPassword(key string, value ...string) string {
 		return this
 	}
 	v := configKeyValue[key]
-	fmt.Println(v)
 	// 如果头尾不是"
 	l := len(v)
 	if v[0:1] != "\"" || v[l-1:l] != "\"" {
 		return this
 	}
-	fmt.Println(v[1 : l-1])
 	return v[1 : l-1]
 }
 

@@ -54,7 +54,6 @@ func readlines() {
 }
 
 func format(line_byte []byte, module_name string, line_num int) {
-	fmt.Println(string(line_byte))
 	// 去掉windows换行的\r
 	line_byte = bytes.ReplaceAll(line_byte, []byte("\r"), []byte(""))
 	// 去掉换行 \n
@@ -93,7 +92,6 @@ func format(line_byte []byte, module_name string, line_num int) {
 	}
 
 	// 如果是模块
-	fmt.Println(string(line_byte_no_space))
 	if module_name != "" {
 		fis = append(fis, &fileinfo{
 			Data:   line_byte_no_space,
