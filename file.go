@@ -110,7 +110,7 @@ func getKey() {
 	tmp := make([]*fileinfo, 0)
 	for i, v := range fis {
 		//先找到第一个 SEP
-		if v == nil {
+		if v.Data == nil {
 			//这个是注释， 跳过
 			continue
 		}
