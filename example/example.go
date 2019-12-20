@@ -12,17 +12,9 @@ type user struct {
 }
 
 func main() {
-	u := &user{
-		Id:   10,
-		Name: "name",
-		Age:  10,
-	}
+
 	goconfig.InitConf("test.conf")
-	goconfig.GetSetString("key.name", "cander")
-	goconfig.GetSetFloat("key.weigth", 0.64)
-	goconfig.GetSetString("listen", ":5000")
-	goconfig.GetSetString("password", ":98895000")
-	goconfig.GetSetJson("user", u)
-	fmt.Println(goconfig.GetString("key.name"))
-	fmt.Println(goconfig.GetString("listen"))
+
+	fmt.Println(goconfig.ReadString("key.name"))
+	fmt.Println(goconfig.ReadString("listen"))
 }
