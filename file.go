@@ -38,69 +38,72 @@ func readlines() {
 	for {
 		line_byte, err := buf.ReadBytes('\n')
 		if err != nil {
-			if err == io.EOF {
+			if err != io.EOF {
+				file.Close()
+				panic(err)
+			} else {
+				format(line_byte, module_name, line_num)
 				break
 			}
-			file.Close()
-			panic(err)
 		}
-		// 去掉windows换行的\r
-		line_byte = bytes.ReplaceAll(line_byte, []byte("\r"), []byte(""))
-		// 去掉换行 \n
-		line_byte = bytes.ReplaceAll(line_byte, []byte("\n"), []byte(""))
-		// 读取完成后会一次写入配置文件
-
-		//去掉2边的空格
-		line_byte_no_space := bytes.Trim(line_byte, " ")
-
-		// 忽略注释和空行
-		if string(line_byte_no_space) == "" {
-			continue
-		}
-		if string(line_byte_no_space[0:1]) == NOTE {
-			// nothing to do
-			// 注释
-			fis = append(fis, &fileinfo{
-				Data: []byte(""),
-				Note: line_byte_no_space,
-			})
-			continue
-		}
-
-		if string(line_byte_no_space[0:1]) == MODEL_START {
-			// 模块
-			line_lenth := len(line_byte_no_space)
-			if string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
-				// 模块
-				module_name = strings.Trim(string(line_byte_no_space[1:line_lenth-1]), " ")
-				//模块直接跳过
-				continue
-			} else {
-				file.Close()
-				panic(fmt.Sprintf("格式错误， 行号：%d", line_num))
-			}
-		}
-
-		// 如果是模块
-
-		if module_name != "" {
-			fis = append(fis, &fileinfo{
-				Data:   line_byte_no_space,
-				Module: module_name,
-			})
-		} else {
-			fis = append(fis, &fileinfo{
-				Data: line_byte_no_space,
-			})
-		}
+		format(line_byte, module_name, line_num)
 		line_num++
 	}
-	//
-	//for _, v := range fis {
-	//	fmt.Printf("key: %s : value: %s \n", string(v.Key), string(v.Value))
-	//}
 
 	getKey()
+}
+
+func format(line_byte []byte, module_name string, line_num int) {
+	fmt.Println(string(line_byte))
+	// 去掉windows换行的\r
+	line_byte = bytes.ReplaceAll(line_byte, []byte("\r"), []byte(""))
+	// 去掉换行 \n
+	line_byte = bytes.ReplaceAll(line_byte, []byte("\n"), []byte(""))
+	// 读取完成后会一次写入配置文件
+
+	//去掉2边的空格
+	line_byte_no_space := bytes.Trim(line_byte, " ")
+
+	// 忽略注释和空行
+	if string(line_byte_no_space) == "" {
+		return
+	}
+	if string(line_byte_no_space[0:1]) == NOTE {
+		// nothing to do
+		// 注释
+		fis = append(fis, &fileinfo{
+			Data: []byte(""),
+			Note: line_byte_no_space,
+		})
+		return
+	}
+
+	if string(line_byte_no_space[0:1]) == MODEL_START {
+		// 模块
+		line_lenth := len(line_byte_no_space)
+		if string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
+			// 模块
+			module_name = strings.Trim(string(line_byte_no_space[1:line_lenth-1]), " ")
+			//模块直接跳过
+			return
+		} else {
+			file.Close()
+			panic(fmt.Sprintf("格式错误， 行号：%d", line_num))
+		}
+	}
+
+	// 如果是模块
+	fmt.Println(string(line_byte_no_space))
+	if module_name != "" {
+		fis = append(fis, &fileinfo{
+			Data:   line_byte_no_space,
+			Module: module_name,
+		})
+	} else {
+		fis = append(fis, &fileinfo{
+			Data: line_byte_no_space,
+		})
+	}
 }
 
 // 写入到
@@ -121,7 +124,7 @@ func getKey() {
 			panic(fmt.Sprintf("key error, not allow contain space, key: %s", key))
 		}
 		if strings.Contains(key, ".") {
-			panic(fmt.Sprintf("key error, not allow contain point, key: %d", key))
+			panic(fmt.Sprintf("key error, not allow contain point, key: %s", key))
 		}
 		v.Key = []byte(key)
 		value := strings.Trim(line[index+1:], " ")

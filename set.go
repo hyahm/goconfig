@@ -5,9 +5,37 @@ import (
 	"fmt"
 	"io/ioutil"
 	"strconv"
+	"strings"
 )
 
-func SetFloat(key string, value float64, notes ...string) float64 {
+func update(key, value string, notes ...string) {
+	module := ""
+	subkey := ""
+	// 是否包含空格
+	if strings.Contains(key, " ") {
+		panic("key error , not allow contain space")
+	}
+	c := strings.Count(key, ".")
+	if c >= 2 {
+		panic("key error , not allow contain point more than one ")
+	}
+	if c == 1 {
+		kv := strings.Split(key, ".")
+		module = kv[0]
+		subkey = kv[1]
+	} else {
+		subkey = key
+	}
+
+	if _, ok := configKeyValue[key]; !ok {
+		// 更新map
+		configKeyValue[key] = value
+		// 更新文件
+		writeFile(subkey, value, module, notes...)
+	}
+}
+
+func WriteFloat(key string, value float64, notes ...string) float64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -16,7 +44,7 @@ func SetFloat(key string, value float64, notes ...string) float64 {
 	return value
 }
 
-func SetFile(key string, value string, notes ...string) string {
+func WriteFile(key string, value string, notes ...string) string {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -29,7 +57,7 @@ func SetFile(key string, value string, notes ...string) string {
 	return string(bs)
 }
 
-func SetString(key string, value string, notes ...string) string {
+func WriteString(key string, value string, notes ...string) string {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -38,7 +66,7 @@ func SetString(key string, value string, notes ...string) string {
 }
 
 // 返回int
-func SetInt(key string, value int, notes ...string) int {
+func WriteInt(key string, value int, notes ...string) int {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -47,7 +75,7 @@ func SetInt(key string, value int, notes ...string) int {
 	return value
 }
 
-func SetUint64(key string, value uint64, notes ...string) uint64 {
+func WriteUint64(key string, value uint64, notes ...string) uint64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -57,7 +85,7 @@ func SetUint64(key string, value uint64, notes ...string) uint64 {
 }
 
 // 2边需要用到引号
-func SetPassword(key string, value string, notes ...string) string {
+func WritePassword(key string, value string, notes ...string) string {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -66,7 +94,7 @@ func SetPassword(key string, value string, notes ...string) string {
 	return value
 }
 
-func SetBool(key string, value bool, notes ...string) bool {
+func WriteBool(key string, value bool, notes ...string) bool {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -78,7 +106,7 @@ func SetBool(key string, value bool, notes ...string) bool {
 	return value
 }
 
-func SetInt64(key string, value int64, notes ...string) int64 {
+func WriteInt64(key string, value int64, notes ...string) int64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
@@ -87,7 +115,7 @@ func SetInt64(key string, value int64, notes ...string) int64 {
 	return value
 }
 
-func SetJson(key string, value interface{}, notes ...string) interface{} {
+func WriteJson(key string, value interface{}, notes ...string) interface{} {
 	if configKeyValue == nil {
 		panic("init first")
 	}

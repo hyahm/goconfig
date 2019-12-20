@@ -1,31 +1,45 @@
 package goconfig
 
 import (
+	"fmt"
 	"io/ioutil"
 	"strconv"
 )
 
-func GetFloat(key string) float64 {
+// 设置的默认值只会改变缓存， 不会改变文件
+// 如果不存在key， 或者value 是错的才选用默认值
+
+func ReadFloat64(key string, value ...float64) float64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
 	// key 不能包含多个.
+	var this float64
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return 0
+		str := strconv.FormatFloat(this, 'E', -1, 64)
+		configKeyValue[key] = str
+		return this
 	}
 	f64, err := strconv.ParseFloat(configKeyValue[key], 64)
 	if err != nil {
-		return 0
+		return this
 	}
 	return f64
 }
 
-func GetFile(key string) string {
+func ReadFile(key string, value ...string) string {
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this string
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return ""
+		configKeyValue[key] = this
 	}
 	// 读取文件
 	bs, err := ioutil.ReadFile(configKeyValue[key])
@@ -35,106 +49,144 @@ func GetFile(key string) string {
 	return string(bs)
 }
 
-func GetString(key string) string {
+func ReadString(key string, value ...string) string {
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this string
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return ""
+		configKeyValue[key] = this
+		return this
 	}
 	return configKeyValue[key]
 }
 
 // 返回int
-func GetInt(key string) int {
+func ReadInt(key string, value ...int) int {
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this int
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return 0
+		str := strconv.Itoa(this)
+		configKeyValue[key] = str
+		return this
 	}
 	i, err := strconv.Atoi(configKeyValue[key])
 	if err != nil {
-		return 0
+		return this
 	}
 	return i
 }
 
-func GetInt16(key string) int16 {
+func ReadUint64(key string, value ...uint64) uint64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
-	if _, ok := configKeyValue[key]; !ok {
-		return 0
-	}
-	i := GetInt(key)
-	// 如果大于取值区间，返回0
-	if i > ((1<<16)/2)-1 || i < -((1<<16)/2) {
-		return 0
-	}
-	return int16(GetInt(key))
-}
-
-func GetUint64(key string) uint64 {
-	if configKeyValue == nil {
-		panic("init first")
+	var this uint64
+	if len(value) > 0 {
+		this = value[0]
 	}
 	if _, ok := configKeyValue[key]; !ok {
-		return 0
+		str := strconv.FormatUint(this, 10)
+		configKeyValue[key] = str
+		return this
 	}
 	i, err := strconv.ParseUint(configKeyValue[key], 10, 64)
 	if err != nil {
-		return 0
+		return this
 	}
 	return i
 }
 
 // 2边需要用到引号
-func GetPassword(key string) string {
+func ReadPassword(key string, value ...string) string {
+	fmt.Println(configKeyValue)
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this string
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return ""
+		configKeyValue[key] = fmt.Sprintf(`"%s"`, this)
+		return this
 	}
 	v := configKeyValue[key]
+	fmt.Println(v)
 	// 如果头尾不是"
 	l := len(v)
-	if string(v[0]) != "\"" || string(v[l-1:]) != "\"" {
-		return ""
+	if v[0:1] != "\"" || v[l-1:l] != "\"" {
+		return this
 	}
+	fmt.Println(v[1 : l-1])
 	return v[1 : l-1]
 }
 
-func GetBool(key string) bool {
+func ReadBool(key string, value ...bool) bool {
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this bool
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return false
-	}
-	if _, ok := configKeyValue[key]; ok {
-		if configKeyValue[key] == "true" {
-			return true
+		if this {
+			configKeyValue[key] = "true"
 		} else {
-			return false
+			configKeyValue[key] = "false"
 		}
+		return this
 	}
-	return false
+	if configKeyValue[key] == "true" {
+		return true
+	} else if configKeyValue[key] == "false" {
+		return false
+	} else {
+		return this
+	}
 }
 
-func GetInt64(key string) int64 {
+func ReadInt64(key string, value ...int64) int64 {
 	if configKeyValue == nil {
 		panic("init first")
 	}
+	var this int64
+	if len(value) > 0 {
+		this = value[0]
+	}
 	if _, ok := configKeyValue[key]; !ok {
-		return 0
+		str := strconv.FormatInt(this, 10)
+		configKeyValue[key] = str
+		return this
 	}
 	i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
 	if err != nil {
-		return 0
+		return this
 	}
 	return i
+}
+
+func ReadBytes(key string, value ...[]byte) []byte {
+	if configKeyValue == nil {
+		panic("init first")
+	}
+	if _, ok := configKeyValue[key]; !ok {
+		return nil
+	}
+	//i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
+	//if err != nil {
+	//	return nil
+	//}
+	return value[0]
 }
 
 //func GetMap(key string) map[string]interface{} {
