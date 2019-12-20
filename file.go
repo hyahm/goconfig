@@ -24,6 +24,7 @@ type fileinfo struct {
 
 var fis []*fileinfo
 var mu sync.RWMutex
+var module_name string
 
 func init() {
 	mu = sync.RWMutex{}
@@ -33,7 +34,7 @@ func readlines() {
 	fis = make([]*fileinfo, 0)
 
 	buf := bufio.NewReader(file)
-	module_name := ""
+
 	line_num := 1
 	for {
 		line_byte, err := buf.ReadBytes('\n')
@@ -42,18 +43,18 @@ func readlines() {
 				file.Close()
 				panic(err)
 			} else {
-				format(line_byte, module_name, line_num)
+				format(line_byte, line_num)
 				break
 			}
 		}
-		format(line_byte, module_name, line_num)
+		format(line_byte, line_num)
 		line_num++
 	}
 
 	getKey()
 }
 
-func format(line_byte []byte, module_name string, line_num int) {
+func format(line_byte []byte, line_num int) {
 	// 去掉windows换行的\r
 	line_byte = bytes.ReplaceAll(line_byte, []byte("\r"), []byte(""))
 	// 去掉换行 \n
