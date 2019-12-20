@@ -71,7 +71,7 @@ func format(line_byte []byte, module_name string, line_num int) {
 		// nothing to do
 		// 注释
 		fis = append(fis, &fileinfo{
-			Data: []byte(""),
+			Data: nil,
 			Note: line_byte_no_space,
 		})
 		return
@@ -110,6 +110,10 @@ func getKey() {
 	tmp := make([]*fileinfo, 0)
 	for i, v := range fis {
 		//先找到第一个 SEP
+		if v == nil {
+			//这个是注释， 跳过
+			continue
+		}
 		line := string(v.Data)
 		index := strings.Index(line, SEP)
 		if index == -1 {
