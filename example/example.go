@@ -15,7 +15,6 @@ func main() {
 
 	goconfig.InitConf("test.conf")
 
-	fmt.Println(goconfig.ReadString("key.crt"))
-	fmt.Println(goconfig.ReadString("key.key"))
+	fmt.Println(goconfig.WriteString("key.name", "liubiao", "姓名"))
 	fmt.Println(goconfig.ReadString("listen"))
 }
