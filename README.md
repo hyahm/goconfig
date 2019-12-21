@@ -1,11 +1,20 @@
 # goconfig
-read go config file
+read go config from key value file file
 
 ### 安装
 ```
 go get github.com/hyahm/goconfig
 ```
-### 使用
+### 注意
+- 一行是一个key ，value
+- 键值 用等号分割
+- 隐形支持json， 存入json []byte 
+- 注释使用 #开头
+- 建议使用Write* 方法写入， 格式更整齐
+- 已经存在的键值不会重复写入
+- 暂时不支持使用方法添加模块注释
+
+
 指定配置文件路径
 goconfig.InitConf(path string) 指定配置文件路径, 如果没有配置文件会生成空的配置文件, 读取的配置文件读取至缓存中
 ```
