@@ -1,53 +1,71 @@
 package goconfig
 
 import (
-	"log"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
 
 //const middle = "========="
 const SEP = "=" // key 和 value 分隔符
-
-var configPath string // 配置文件路径，保存后方便重新加载配置文件
-var file *os.File
-var configKeyValue map[string]string
-
 const NOTE = "#"        // #开头的为注释
 const MODEL_START = "[" // [开头的为注释
 const MODEL_END = "]"   // [开头的为注释
-
+var fl *filelines
 // 读取配置文件
 
-func InitConf(configpath string) {
-	configKeyValue = make(map[string]string)
-	fptmp := configpath
-	fptmp = filepath.Clean(fptmp)
-	//判断是相对路径还是绝对路径
+type key struct {
+	Module []byte
+	Name []byte
+	Value []byte
+}
 
-	_, err := os.Stat(fptmp)
+type note struct {
+	Module []byte // module的注释
+	Key []byte   // 某个key的注释
+	Value []byte // 注释的值
+}
+
+type filetype struct {
+	// 每一行存在这三种类型， 空行去掉了
+	Sign   int   // 1是 key， 2， 是module   3， note
+	Key    *key   // key
+	Module []byte   // Module名
+	Note   *note   // 注释
+}
+
+type filelines struct {
+	line []*filetype // 每一行
+	filepath string    // 配置文件
+	read  *os.File
+	write  *os.File
+	All []byte  // 文件所有数据
+	configKeyValue  map[string][]byte // key, value
+}
+
+func InitConf(configpath string) {
+
+	fptmp := filepath.Clean(configpath)
+	//判断文件目录是否存在
+	_, err := os.Stat(filepath.Dir(fptmp))
 	if err != nil {
+		// 不存在就先创建目录
 		if err := os.MkdirAll(filepath.Dir(fptmp), 0755); err != nil {
 			panic(err)
 		}
 	}
-	file, err = os.OpenFile(fptmp, os.O_CREATE|os.O_RDONLY, 0644)
+	fl = &filelines{
+		filepath: configpath,
+		line: make([]*filetype,0),
+		configKeyValue: make(map[string][]byte),
+	}
+	fl.All, err = ioutil.ReadFile(fptmp)
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
-	configPath = fptmp
 
-	readlines()
+	fl.readlines()
 }
 
-func Print() {
-	if configKeyValue == nil {
-		panic("init first")
-	}
-	for k, v := range configKeyValue {
-		log.Printf("key: %s ---- value: %s \n", k, v)
-	}
-}
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数

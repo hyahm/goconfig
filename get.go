@@ -11,7 +11,7 @@ import (
 // 如果不存在key， 或者value 是错的才选用默认值
 
 func ReadFloat64(key string, value ...float64) float64 {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	// key 不能包含多个.
@@ -19,12 +19,12 @@ func ReadFloat64(key string, value ...float64) float64 {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		str := strconv.FormatFloat(this, 'E', -1, 64)
-		configKeyValue[key] = str
+		fl.configKeyValue[key] = []byte(str)
 		return this
 	}
-	f64, err := strconv.ParseFloat(configKeyValue[key], 64)
+	f64, err := strconv.ParseFloat(string(fl.configKeyValue[key]), 64)
 	if err != nil {
 		return this
 	}
@@ -32,18 +32,18 @@ func ReadFloat64(key string, value ...float64) float64 {
 }
 
 func ReadFile(key string, value ...string) string {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
-		configKeyValue[key] = this
+	if _, ok := fl.configKeyValue[key]; !ok {
+		fl.configKeyValue[key] = []byte(this)
 	}
 	// 读取文件
-	bs, err := ioutil.ReadFile(configKeyValue[key])
+	bs, err := ioutil.ReadFile(string(fl.configKeyValue[key]))
 	if err != nil {
 		return ""
 	}
@@ -51,35 +51,35 @@ func ReadFile(key string, value ...string) string {
 }
 
 func ReadString(key string, value ...string) string {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
-		configKeyValue[key] = this
+	if _, ok := fl.configKeyValue[key]; !ok {
+		fl.configKeyValue[key] = []byte(this)
 		return this
 	}
-	return configKeyValue[key]
+	return string(fl.configKeyValue[key])
 }
 
 // 返回int
 func ReadInt(key string, value ...int) int {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this int
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		str := strconv.Itoa(this)
-		configKeyValue[key] = str
+		fl.configKeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.Atoi(configKeyValue[key])
+	i, err := strconv.Atoi(string(fl.configKeyValue[key]))
 	if err != nil {
 		return this
 	}
@@ -87,19 +87,19 @@ func ReadInt(key string, value ...int) int {
 }
 
 func ReadUint64(key string, value ...uint64) uint64 {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this uint64
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
-		configKeyValue[key] = str
+		fl.configKeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.ParseUint(configKeyValue[key], 10, 64)
+	i, err := strconv.ParseUint(string(fl.configKeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -108,45 +108,45 @@ func ReadUint64(key string, value ...uint64) uint64 {
 
 // 2边需要用到引号
 func ReadPassword(key string, value ...string) string {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
-		configKeyValue[key] = fmt.Sprintf(`"%s"`, this)
+	if _, ok := fl.configKeyValue[key]; !ok {
+		fl.configKeyValue[key] = []byte(fmt.Sprintf(`"%s"`, this))
 		return this
 	}
-	v := configKeyValue[key]
+	v := fl.configKeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
-	if v[0:1] != "\"" || v[l-1:l] != "\"" {
+	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
 		return this
 	}
-	return v[1 : l-1]
+	return string(v[1 : l-1])
 }
 
 func ReadBool(key string, value ...bool) bool {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this bool
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		if this {
-			configKeyValue[key] = "true"
+			fl.configKeyValue[key] = []byte("true")
 		} else {
-			configKeyValue[key] = "false"
+			fl.configKeyValue[key] = []byte("false")
 		}
 		return this
 	}
-	if configKeyValue[key] == "true" {
+	if string(fl.configKeyValue[key]) == "true" {
 		return true
-	} else if configKeyValue[key] == "false" {
+	} else if string(fl.configKeyValue[key]) == "false" {
 		return false
 	} else {
 		return this
@@ -154,19 +154,19 @@ func ReadBool(key string, value ...bool) bool {
 }
 
 func ReadInt64(key string, value ...int64) int64 {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
 	var this int64
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
-		configKeyValue[key] = str
+		fl.configKeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
+	i, err := strconv.ParseInt(string(fl.configKeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -174,10 +174,10 @@ func ReadInt64(key string, value ...int64) int64 {
 }
 
 func ReadBytes(key string, value ...[]byte) []byte {
-	if configKeyValue == nil {
+	if fl == nil {
 		panic("init first")
 	}
-	if _, ok := configKeyValue[key]; !ok {
+	if _, ok := fl.configKeyValue[key]; !ok {
 		return nil
 	}
 	//i, err := strconv.ParseInt(configKeyValue[key], 10, 64)
