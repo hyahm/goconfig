@@ -1,6 +1,7 @@
 package goconfig
 
 import (
+	"fmt"
 	"testing"
 )
 
@@ -16,12 +17,12 @@ func TestGet(t *testing.T) {
 	tests := []getvalue{
 		{
 			title: "float64",
-			key:   "float",
+			key:   "one.float",
 			value: 0.25,
 		},
 		{
 			title: "string",
-			key:   "string",
+			key:   "one.string",
 			value: "goconfig",
 		},
 		{
@@ -47,12 +48,12 @@ func TestGet(t *testing.T) {
 		},
 		{
 			title: "bool",
-			key:   "bool",
+			key:   "two.bool",
 			value: true,
 		},
 		{
 			title: "password",
-			key:   "password",
+			key:   "two.password",
 			value: "adlfjlskdf ",
 		},
 	}

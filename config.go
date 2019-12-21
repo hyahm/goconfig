@@ -11,37 +11,31 @@ const SEP = "=" // key 和 value 分隔符
 const NOTE = "#"        // #开头的为注释
 const MODEL_START = "[" // [开头的为注释
 const MODEL_END = "]"   // [开头的为注释
-var fl *filelines
 // 读取配置文件
 
-type key struct {
-	Module []byte
-	Name []byte
-	Value []byte
+type node struct {
+	key string
+	value []byte
+	note [][]byte
 }
 
-type note struct {
-	Module []byte // module的注释
-	Key []byte   // 某个key的注释
-	Value []byte // 注释的值
+type groupLine struct {
+	group []*node  // 组的行
+	note [][]byte  // 组注释
+	name []byte   // 组名
 }
 
-type filetype struct {
-	// 每一行存在这三种类型， 空行去掉了
-	Sign   int   // 1是 key， 2， 是module   3， note
-	Key    *key   // key
-	Module []byte   // Module名
-	Note   *note   // 注释
+type config struct {
+	Groups []*groupLine  // 组
+	Lines []*node    // 单key
+	Read []byte  // 文件读出来的所有内容
+	Write []byte  // 文件写的所有内容
+	KeyValue map[string][]byte   // 键值缓存， key的值  key or group.key
+	Filepath string  // 配置文件路径
 }
 
-type filelines struct {
-	line []*filetype // 每一行
-	filepath string    // 配置文件
-	read  *os.File
-	write  *os.File
-	All []byte  // 文件所有数据
-	configKeyValue  map[string][]byte // key, value
-}
+
+var fl *config
 
 func InitConf(configpath string) {
 
@@ -54,12 +48,12 @@ func InitConf(configpath string) {
 			panic(err)
 		}
 	}
-	fl = &filelines{
-		filepath: configpath,
-		line: make([]*filetype,0),
-		configKeyValue: make(map[string][]byte),
+	fl = &config{
+		Filepath: configpath,
+		Lines: make([]*node, 0),
+		KeyValue: make(map[string][]byte),
 	}
-	fl.All, err = ioutil.ReadFile(fptmp)
+	fl.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
 		panic(err)
 	}

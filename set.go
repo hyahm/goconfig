@@ -25,16 +25,16 @@ package goconfig
 //		subkey = key
 //	}
 //
-//	if _, ok := configKeyValue[key]; !ok {
+//	if _, ok := fl.configKeyValue[key]; !ok {
 //		// 更新文件
 //		writeFile(subkey, value, module, notes...)
 //		// 更新map
-//		configKeyValue[key] = value
+//		fl.configKeyValue[key] = []byte(value)
 //	}
 //}
 //
 //func WriteFloat(key string, value float64, notes ...string) {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s1 := strconv.FormatFloat(value, 'E', -1, 64)
@@ -44,7 +44,7 @@ package goconfig
 //
 //
 //func WriteString(key string, value string, notes ...string)  {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	update(key, value, notes...)
@@ -53,7 +53,7 @@ package goconfig
 //
 //// 返回int
 //func WriteInt(key string, value int, notes ...string)  {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s := strconv.Itoa(value)
@@ -62,7 +62,7 @@ package goconfig
 //}
 //
 //func WriteUint64(key string, value uint64, notes ...string) {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s := strconv.FormatUint(value, 10)
@@ -71,7 +71,7 @@ package goconfig
 //
 //// 2边需要用到引号
 //func WritePassword(key string, value string, notes ...string) {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s := fmt.Sprintf(`"%s"`, value)
@@ -79,7 +79,7 @@ package goconfig
 //}
 //
 //func WriteBool(key string, value bool, notes ...string) {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s := "false"
@@ -90,7 +90,7 @@ package goconfig
 //}
 //
 //func WriteInt64(key string, value int64, notes ...string)  {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	s := strconv.FormatInt(value, 10)
@@ -99,9 +99,13 @@ package goconfig
 //}
 //
 //func WriteBytes(key string, value []byte, notes ...string) {
-//	if configKeyValue == nil {
+//	if fl == nil {
 //		panic("init first")
 //	}
 //	update(key, string(value), notes...)
 //
+//}
+//
+//func FlushWrite() {
+//	// 写入文件
 //}

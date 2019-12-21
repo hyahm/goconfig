@@ -19,12 +19,13 @@ func ReadFloat64(key string, value ...float64) float64 {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+
+	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatFloat(this, 'E', -1, 64)
-		fl.configKeyValue[key] = []byte(str)
+		fl.KeyValue[key] = []byte(str)
 		return this
 	}
-	f64, err := strconv.ParseFloat(string(fl.configKeyValue[key]), 64)
+	f64, err := strconv.ParseFloat(string(fl.KeyValue[key]), 64)
 	if err != nil {
 		return this
 	}
@@ -39,11 +40,11 @@ func ReadFile(key string, value ...string) string {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
-		fl.configKeyValue[key] = []byte(this)
+	if _, ok := fl.KeyValue[key]; !ok {
+		fl.KeyValue[key] = []byte(this)
 	}
 	// 读取文件
-	bs, err := ioutil.ReadFile(string(fl.configKeyValue[key]))
+	bs, err := ioutil.ReadFile(string(fl.KeyValue[key]))
 	if err != nil {
 		return ""
 	}
@@ -58,11 +59,11 @@ func ReadString(key string, value ...string) string {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
-		fl.configKeyValue[key] = []byte(this)
+	if _, ok := fl.KeyValue[key]; !ok {
+		fl.KeyValue[key] = []byte(this)
 		return this
 	}
-	return string(fl.configKeyValue[key])
+	return string(fl.KeyValue[key])
 }
 
 // 返回int
@@ -74,12 +75,12 @@ func ReadInt(key string, value ...int) int {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.Itoa(this)
-		fl.configKeyValue[key] = []byte(str)
+		fl.KeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.Atoi(string(fl.configKeyValue[key]))
+	i, err := strconv.Atoi(string(fl.KeyValue[key]))
 	if err != nil {
 		return this
 	}
@@ -94,12 +95,12 @@ func ReadUint64(key string, value ...uint64) uint64 {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
-		fl.configKeyValue[key] = []byte(str)
+		fl.KeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.ParseUint(string(fl.configKeyValue[key]), 10, 64)
+	i, err := strconv.ParseUint(string(fl.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -115,11 +116,11 @@ func ReadPassword(key string, value ...string) string {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
-		fl.configKeyValue[key] = []byte(fmt.Sprintf(`"%s"`, this))
+	if _, ok := fl.KeyValue[key]; !ok {
+		fl.KeyValue[key] = []byte(fmt.Sprintf(`"%s"`, this))
 		return this
 	}
-	v := fl.configKeyValue[key]
+	v := fl.KeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
@@ -136,17 +137,17 @@ func ReadBool(key string, value ...bool) bool {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+	if _, ok := fl.KeyValue[key]; !ok {
 		if this {
-			fl.configKeyValue[key] = []byte("true")
+			fl.KeyValue[key] = []byte("true")
 		} else {
-			fl.configKeyValue[key] = []byte("false")
+			fl.KeyValue[key] = []byte("false")
 		}
 		return this
 	}
-	if string(fl.configKeyValue[key]) == "true" {
+	if string(fl.KeyValue[key]) == "true" {
 		return true
-	} else if string(fl.configKeyValue[key]) == "false" {
+	} else if string(fl.KeyValue[key]) == "false" {
 		return false
 	} else {
 		return this
@@ -161,12 +162,12 @@ func ReadInt64(key string, value ...int64) int64 {
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
-		fl.configKeyValue[key] = []byte(str)
+		fl.KeyValue[key] = []byte(str)
 		return this
 	}
-	i, err := strconv.ParseInt(string(fl.configKeyValue[key]), 10, 64)
+	i, err := strconv.ParseInt(string(fl.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -177,7 +178,7 @@ func ReadBytes(key string, value ...[]byte) []byte {
 	if fl == nil {
 		panic("init first")
 	}
-	if _, ok := fl.configKeyValue[key]; !ok {
+	if _, ok := fl.KeyValue[key]; !ok {
 		return nil
 	}
 	//i, err := strconv.ParseInt(configKeyValue[key], 10, 64)

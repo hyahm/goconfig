@@ -7,7 +7,7 @@ package goconfig
 //
 //// 格式文件, sit 0, 1 ,
 //func writeFile(key, value, module string, notes ...string) {
-//	if len(fis) == 0 {
+//	if len(fl.line) == 0 {
 //		// 如果有注释， 先添加注释
 //		for _,v := range notes {
 //			fis = append(fis, &fileinfo{
