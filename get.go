@@ -3,6 +3,7 @@ package goconfig
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strconv"
 )
 
@@ -184,6 +185,14 @@ func ReadBytes(key string, value ...[]byte) []byte {
 	//	return nil
 	//}
 	return value[0]
+}
+
+func ReadEnv(key string, value ...string) (s string) {
+	s = os.Getenv(key)
+	if s == "" && len(value) > 0 {
+		s = value[0]
+	}
+	return
 }
 
 //func GetMap(key string) map[string]interface{} {
