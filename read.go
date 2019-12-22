@@ -15,7 +15,7 @@ import (
 //var fis []*fileinfo
 var module_name []byte
 var module_filter map[string]bool
-var isnote bool
+var notes [][]byte
 
 const (
 	N  = iota
@@ -40,7 +40,6 @@ func classification(line []byte) {
 	// 分大类
 	//去掉2边的空格
 	line_byte_no_space := bytes.Trim(line, " ")
-
 	// 忽略注释和空行
 	if string(line_byte_no_space) == "" {
 		return
@@ -56,6 +55,8 @@ func classification(line []byte) {
 			if _, ok := module_filter[string(module_name)]; ok {
 				panic(fmt.Sprintf("group %s Repetition", string(module_name)))
 			}
+			fl.newGroup(module_name, notes...)
+			notes = nil
 			module_filter[string(module_name)] = true
 			return
 		}
@@ -64,52 +65,30 @@ func classification(line []byte) {
 		//判断是否是注释
 		if string(line_byte_no_space[0:1]) == NOTE {
 			// 注释
-			// 这个kv 第一次添加值的话
-			if isnote {
-				fl.addNote(line_byte_no_space)
-				// 如果第二行还是注释的话, 接着添加注释
-			} else {
-				fl.newNote(line_byte_no_space)
-			}
-			isnote = true
+			notes = append(notes, line_byte_no_space)
 			return
 		}
+		// 添加
 		k, v := getKeyValue(line_byte_no_space)
-		if isnote {
-			// 添加kv
-			// 如果前面有注释， 接着上次的
-			fl.addKeyValue(k,v)
-		} else {
-			// 新建一个
-			fl.newKeyValue(k,v)
-		}
-		isnote = false
-		return
+		fl.newKeyValue(k, v , notes...)
+		notes = nil
 	} else {
 		// 组
 		if string(line_byte_no_space[0:1]) == NOTE {
 			// 注释
-			if isnote {
-				// 如果第二行还是注释的话, 接着添加注释
-				fl.addGroupNote(line_byte_no_space)
-
-			} else  {
-				//如果是新的group
-				fl.newGroupNote(module_name, line_byte_no_space)
-			}
-			isnote = true
+			notes = append(notes, line_byte_no_space)
 			return
 		}
 		k, v := getKeyValue(line_byte_no_space)
-		if isnote {
-			// 如果前面有注释， 接着上次的
-			fl.addGroupKeyValue(k, v)
-		} else {
-			// 新建一个
-			fl.newGroupKeyValue(module_name, k ,v)
+		for i,g := range fl.Groups {
+			//在组里面就添加
+			if string(g.name) == string(module_name) {
+				fl.addGroupKeyValue(i, k ,v, notes... )
+				notes = nil
+				return
+			}
 		}
-		isnote = false
-		return
+		panic("something error")
 	}
 }
 

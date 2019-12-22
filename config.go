@@ -38,7 +38,7 @@ type config struct {
 var fl *config
 
 func InitConf(configpath string) {
-
+	notes = make([][]byte, 0)
 	fptmp := filepath.Clean(configpath)
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
@@ -47,7 +47,9 @@ func InitConf(configpath string) {
 		if err := os.MkdirAll(filepath.Dir(fptmp), 0755); err != nil {
 			panic(err)
 		}
+
 	}
+	os.OpenFile(fptmp,os.O_CREATE,0644)
 	fl = &config{
 		Filepath: configpath,
 		Lines: make([]*node, 0),

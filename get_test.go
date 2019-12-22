@@ -1,7 +1,6 @@
 package goconfig
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -102,6 +101,4 @@ func testGet(t *testing.T, test getvalue) {
 	default:
 
 	}
-
-	return
 }

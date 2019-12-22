@@ -1,52 +1,45 @@
 package goconfig
 
-func (f *config) newGroupKeyValue(modele []byte, k string, v []byte) {
+
+func (f *config) newGroup(module []byte, notes ...[]byte) {
+	// 新组的key
+	if len(f.Groups) == 0 {
+		f.Groups = make([]*groupLine, 0)
+	}
+
+	f.Groups = append(f.Groups, &groupLine{
+		note: notes,  // 组注释
+		name: module,   // 组名
+	})
+}
+
+func (f *config) newGroupKeyValue(module []byte, k string,v []byte, notes ...[]byte) {
+	// 新组的key
+	if len(f.Groups) == 0 {
+		f.Groups = make([]*groupLine, 0)
+	}
+	tmp := &node{
+		key: k,
+		value:v,
+		note: notes,
+	}
+	g := make([]*node,0)
+	g = append(g, tmp)
+	f.Groups = append(f.Groups, &groupLine{
+		group: g,  // 组的行
+		note: make([][]byte, 0),  // 组注释
+		name: module,   // 组名
+	})
+}
+
+func (f *config) addGroupKeyValue(i int, k string, v []byte, notes ...[]byte) {
 	// 新组的key
 	tmp := &node{
 		key: k,
 		value: v,
-		note: make([][]byte, 0),
+		note: notes,
 	}
-	g := make([]*node,0)
-	g = append(g, tmp)
-	f.Groups = append(f.Groups, &groupLine{
-		group: g,  // 组的行
-		note: make([][]byte, 0),  // 组注释
-		name: modele,   // 组名
-	})
-	f.KeyValue[string(modele) + "." +k] = v
+	f.Groups[i].group = append(f.Groups[i].group, tmp)
+	f.KeyValue[string(f.Groups[i].name) + "." +k] = v
 }
 
-func (f *config) newGroupNote(modele []byte,value []byte) {
-	// 新组的注释
-	nt := make([][]byte, 0)
-	nt = append(nt, value)
-	tmp := &node{
-		note: nt,
-	}
-	g := make([]*node,0)
-	g = append(g, tmp)
-	f.Groups = append(f.Groups, &groupLine{
-		group: g,  // 组的行
-		note: make([][]byte, 0),  // 组注释
-		name: modele,   // 组名
-	})
-}
-
-func (f *config) addGroupNote(note []byte) {
-	// 同一个组里面添加注释
-	gl := len(f.Groups)
-	f.Groups[gl-1].note = append(f.Groups[gl-1].note, note)
-}
-
-func (f *config) addGroupKeyValue(k string, v []byte) {
-	// 同一个组里面增加key
-	tmp := &node{
-		key: k,
-		value: v,
-		note: make([][]byte, 0),
-	}
-	gl := len(f.Groups)
-	f.Groups[gl-1].group = append(f.Groups[gl-1].group, tmp)
-	f.KeyValue[string(f.Groups[gl-1].name) + "." +k] = v
-}
