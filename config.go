@@ -63,5 +63,27 @@ func InitConf(configpath string) {
 	fl.readlines()
 }
 
+func InitWriteConf(configpath string) {
+	notes = make([][]byte, 0)
+	fptmp := filepath.Clean(configpath)
+	//判断文件目录是否存在
+	_, err := os.Stat(filepath.Dir(fptmp))
+	if err != nil {
+		// 不存在就先创建目录
+		if err := os.MkdirAll(filepath.Dir(fptmp), 0755); err != nil {
+			panic(err)
+		}
+
+	}
+	os.Remove(fptmp)
+
+	fl = &config{
+		Filepath: configpath,
+		Lines: make([]*node, 0),
+		KeyValue: make(map[string][]byte),
+	}
+
+}
+
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数

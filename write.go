@@ -70,7 +70,7 @@ func FlushWrite() {
 			fl.Write = append(fl.Write, []byte(line)...)
 		}
 		// 打印kv
-		kv := fmt.Sprintf("%s: %s\n",v.key, string(v.value))
+		kv := fmt.Sprintf("%s = %s\n",v.key, string(v.value))
 		fl.Write = append(fl.Write, []byte(kv)...)
 	}
 	for _, v := range fl.Groups {
@@ -89,7 +89,7 @@ func FlushWrite() {
 				fl.Write = append(fl.Write, []byte(line)...)
 			}
 			// 打印kv
-			kv := fmt.Sprintf("%s: %s\n",gn.key, string(gn.value))
+			kv := fmt.Sprintf("%s = %s\n",gn.key, string(gn.value))
 			fl.Write = append(fl.Write, []byte(kv)...)
 		}
 	}
