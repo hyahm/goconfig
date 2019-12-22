@@ -7,10 +7,12 @@ import (
 )
 
 //const middle = "========="
-const SEP = "=" // key 和 value 分隔符
-const NOTE = "#"        // #开头的为注释
-const MODEL_START = "[" // [开头的为注释
-const MODEL_END = "]"   // [开头的为注释
+var(
+	SEP = "=" // key 和 value 分隔符
+	NOTE = "#"        // #开头的为注释
+	MODEL_START = "[" // [开头的为注释
+	MODEL_END = "]"   // [开头的为注释
+)
 // 读取配置文件
 
 type node struct {
