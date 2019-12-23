@@ -232,7 +232,11 @@ func ReadPath(key string, value ...string) string {
 	if _, ok := fl.KeyValue[key]; !ok {
 		return this
 	}
-
+	this = string(fl.KeyValue[key])
+	l := len(this)
+	if this[l:l] == "/" {
+		this = this[:l-1]
+	}
 	return this
 }
 
@@ -245,13 +249,18 @@ func ReadUrl(key string, value ...string) string {
 	if len(value) > 0 {
 		l := len(value[0])
 		if value[0][l-1:l] != "/" {
-			this = value[0]+"/"
+			this = value[0] + "/"
 		} else {
 			this = value[0]
 		}
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
 		return this
+	}
+	this = string(fl.KeyValue[key])
+	l := len(this)
+	if this[l:l] != "/" {
+		this = this + "/"
 	}
 	return this
 }
