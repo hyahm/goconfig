@@ -38,6 +38,8 @@ func FlushWrite() {
 		fl.Write = append(fl.Write, []byte(kv)...)
 	}
 	for _, v := range fl.Groups {
+		// 模块添加换行
+		fl.Write = append(fl.Write, []byte("\n")...)
 		// 打印组注释
 		for _, n := range v.note {
 			line := fmt.Sprintf("%s %s\n", NOTE, string(n))
