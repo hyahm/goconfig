@@ -41,20 +41,22 @@ func classification(line []byte) error {
 	}
 
 	//判断是否是组
-	if string(line_byte_no_space[0:1]) == MODEL_START {
+
+	line_lenth := len(line_byte_no_space)
+	fmt.Println("module_name", string(module_name))
+	fmt.Println("++++++++++++++", string(line_byte_no_space))
+	if string(line_byte_no_space[0:1]) == MODEL_START && string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END  {
 		// 模块
-		line_lenth := len(line_byte_no_space)
-		if string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
-			// 模块
-			module_name = bytes.Trim(line_byte_no_space[1:line_lenth-1], " ")
-			if _, ok := module_filter[string(module_name)]; ok {
-				panic(fmt.Sprintf("group %s Repetition", string(module_name)))
-			}
-			fl.newGroup(module_name, notes...)
-			notes = nil
-			module_filter[string(module_name)] = true
-			return nil
+		fmt.Println("-----------", string(module_name))
+		module_name = bytes.Trim(line_byte_no_space[1:line_lenth-1], " ")
+		if _, ok := module_filter[string(module_name)]; ok {
+			return errors.New(fmt.Sprintf("group %s Repetition", string(module_name)))
 		}
+		fl.newGroup(module_name, notes...)
+		notes = nil
+		module_filter[string(module_name)] = true
+		return nil
+
 	}
 	if string(module_name) == "" {
 		//判断是否是注释
@@ -63,12 +65,10 @@ func classification(line []byte) error {
 			notes = append(notes, line_byte_no_space)
 			return nil
 		}
-		// 添加
+		// 添加kv
 		k, v, err := getKeyValue(line_byte_no_space)
 		if err != nil {
-			if err != nil {
-				return err
-			}
+			return err
 		}
 		fl.newKeyValue(k, v, notes...)
 		notes = nil
@@ -81,9 +81,7 @@ func classification(line []byte) error {
 		}
 		k, v, err := getKeyValue(line_byte_no_space)
 		if err != nil {
-			if err != nil {
-				return err
-			}
+			return err
 		}
 		for i, g := range fl.Groups {
 			//在组里面就添加
@@ -95,12 +93,13 @@ func classification(line []byte) error {
 		}
 
 	}
-	return errors.New("something error")
+	return nil
 }
 
 // 写入到
 func getKeyValue(line []byte) (string, []byte, error) {
 	// 存入值到 configKeyValue， 更新 fis
+	fmt.Println(string(line))
 	index := bytes.Index(line, []byte(SEP))
 	if index == -1 {
 		return "", nil, errors.New(fmt.Sprintf("key error, not found =, line: %s", string(line)))
@@ -114,14 +113,18 @@ func getKeyValue(line []byte) (string, []byte, error) {
 	if bytes.Contains(key, []byte(".")) {
 		return "", nil, errors.New(fmt.Sprintf("key error, not allow contain point, key: %s", string(key)))
 	}
+	// value 去掉2边空格
 	value := bytes.Trim(line[index+1:], " ")
-
-	if _, ok := fl.KeyValue[string(key)]; ok {
+	k := string(key)
+	if string(module_name) != "" {
+		k = string(module_name) + "." + k
+	}
+	if _, ok := fl.KeyValue[k]; ok {
 		// 去掉重复项
 		fmt.Println(fmt.Sprintf("key duplicate, key: %s", string(key)))
 		return "", nil, nil
 	}
 
-	fl.KeyValue[string(key)] = value
+	fl.KeyValue[k] = value
 	return string(key), value, nil
 }
