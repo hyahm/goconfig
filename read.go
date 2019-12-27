@@ -2,6 +2,7 @@ package goconfig
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 )
 
@@ -15,7 +16,7 @@ var module_name []byte
 var module_filter map[string]bool
 var notes [][]byte
 
-func (fl *config) readlines() {
+func (fl *config) readlines() error {
 	module_filter = make(map[string]bool)
 	// 去掉windows换行的\r
 	fl.Read = bytes.ReplaceAll(fl.Read, []byte("\r"), []byte(""))
@@ -23,18 +24,20 @@ func (fl *config) readlines() {
 	lines := bytes.Split(fl.Read, []byte("\n"))
 	for i := 0; i < len(lines); i++ {
 		// 分类
-		classification(lines[i])
+		if err := classification(lines[i]); err != nil {
+			return err
+		}
 	}
-	//fl.getKey()
+	return nil
 }
 
-func classification(line []byte) {
+func classification(line []byte) error {
 	// 分大类
 	//去掉2边的空格
 	line_byte_no_space := bytes.Trim(line, " ")
 	// 忽略注释和空行
 	if string(line_byte_no_space) == "" {
-		return
+		return nil
 	}
 
 	//判断是否是组
@@ -50,7 +53,7 @@ func classification(line []byte) {
 			fl.newGroup(module_name, notes...)
 			notes = nil
 			module_filter[string(module_name)] = true
-			return
+			return nil
 		}
 	}
 	if string(module_name) == "" {
@@ -58,10 +61,15 @@ func classification(line []byte) {
 		if string(line_byte_no_space[0:1]) == NOTE {
 			// 注释
 			notes = append(notes, line_byte_no_space)
-			return
+			return nil
 		}
 		// 添加
-		k, v := getKeyValue(line_byte_no_space)
+		k, v, err := getKeyValue(line_byte_no_space)
+		if err != nil {
+			if err != nil {
+				return err
+			}
+		}
 		fl.newKeyValue(k, v, notes...)
 		notes = nil
 	} else {
@@ -69,44 +77,51 @@ func classification(line []byte) {
 		if string(line_byte_no_space[0:1]) == NOTE {
 			// 注释
 			notes = append(notes, line_byte_no_space)
-			return
+			return nil
 		}
-		k, v := getKeyValue(line_byte_no_space)
+		k, v, err := getKeyValue(line_byte_no_space)
+		if err != nil {
+			if err != nil {
+				return err
+			}
+		}
 		for i, g := range fl.Groups {
 			//在组里面就添加
 			if string(g.name) == string(module_name) {
 				fl.addGroupKeyValue(i, k, v, notes...)
 				notes = nil
-				return
+				return nil
 			}
 		}
-		panic("something error")
+
 	}
+	return errors.New("something error")
 }
 
 // 写入到
-func getKeyValue(line []byte) (string, []byte) {
+func getKeyValue(line []byte) (string, []byte, error) {
 	// 存入值到 configKeyValue， 更新 fis
 	index := bytes.Index(line, []byte(SEP))
 	if index == -1 {
-		panic(fmt.Sprintf("key error, not found =, line: %s", string(line)))
+		return "", nil, errors.New(fmt.Sprintf("key error, not found =, line: %s", string(line)))
 	}
 	// 左边的是key， 右边的是值
 	key := bytes.Trim(line[:index], " ")
 	// 不能包含. 和空格
 	if bytes.Contains(key, []byte(" ")) {
-		panic(fmt.Sprintf("key error, not allow contain space, key: %s", string(key)))
+		return "", nil, errors.New(fmt.Sprintf("key error, not allow contain space, key: %s", string(key)))
 	}
 	if bytes.Contains(key, []byte(".")) {
-		panic(fmt.Sprintf("key error, not allow contain point, key: %s", string(key)))
+		return "", nil, errors.New(fmt.Sprintf("key error, not allow contain point, key: %s", string(key)))
 	}
 	value := bytes.Trim(line[index+1:], " ")
 
 	if _, ok := fl.KeyValue[string(key)]; ok {
 		// 去掉重复项
-		return "", nil
+		fmt.Println(fmt.Sprintf("key duplicate, key: %s", string(key)))
+		return "", nil, nil
 	}
 
 	fl.KeyValue[string(key)] = value
-	return string(key), value
+	return string(key), value, nil
 }

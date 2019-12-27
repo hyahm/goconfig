@@ -1,6 +1,7 @@
 package goconfig
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -39,6 +40,38 @@ type config struct {
 
 var fl *config
 
+// 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
+func Reload() error {
+	notes = nil
+	file := fl.Filepath
+	//判断文件目录是否存在
+	_, err := os.Stat(fl.Filepath)
+	if err != nil {
+		// 不存在就先创建目录
+		return err
+
+	}
+	// 清空数据
+	// 检查是否有错
+	tmp := &config{
+		Filepath: file,
+		Lines:    make([]*node, 0),
+		KeyValue: make(map[string][]byte),
+	}
+	tmp.Read, err = ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	if err := tmp.readlines(); err != nil {
+		fmt.Println(err)
+		return err
+	}
+	// 更新值
+	fl = nil
+	fl = tmp
+	return nil
+}
+
 func InitConf(configpath string) {
 	notes = make([][]byte, 0)
 	fptmp := filepath.Clean(configpath)
@@ -51,6 +84,7 @@ func InitConf(configpath string) {
 		}
 
 	}
+	// 创建文件
 	os.OpenFile(fptmp, os.O_CREATE, 0644)
 	fl = &config{
 		Filepath: configpath,
@@ -62,7 +96,9 @@ func InitConf(configpath string) {
 		panic(err)
 	}
 
-	fl.readlines()
+	if err := fl.readlines(); err != nil {
+		panic(err)
+	}
 }
 
 func InitWriteConf(configpath string) {
@@ -85,17 +121,4 @@ func InitWriteConf(configpath string) {
 		KeyValue: make(map[string][]byte),
 	}
 
-}
-
-// 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
-func Reload() error {
-	//判断文件目录是否存在
-	_, err := os.Stat(fl.Filepath)
-	if err != nil {
-		// 不存在就先创建目录
-		return err
-
-	}
-	fl.readlines()
-	return nil
 }
