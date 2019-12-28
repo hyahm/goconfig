@@ -10,10 +10,11 @@ import (
 
 //const middle = "========="
 var (
-	SEP         = "=" // key 和 value 分隔符
-	NOTE        = "#" // #开头的为注释
-	MODEL_START = "[" // [开头的为注释
-	MODEL_END   = "]" // [开头的为注释
+	SEP         = "="  // key 和 value 分隔符
+	NOTE        = "#;" // #开头的为注释
+	MODEL_START = "["  // [开头的为注释
+	MODEL_END   = "]"  // [开头的为注释
+	WELL        = "#"  // 写入的注释
 )
 
 // 读取配置文件

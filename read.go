@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // 全部统一 utf-8格式
@@ -45,7 +46,7 @@ func classification(line []byte) error {
 	line_lenth := len(line_byte_no_space)
 	fmt.Println("module_name", string(module_name))
 	fmt.Println("++++++++++++++", string(line_byte_no_space))
-	if string(line_byte_no_space[0:1]) == MODEL_START && string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END  {
+	if string(line_byte_no_space[0:1]) == MODEL_START && string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
 		// 模块
 		fmt.Println("-----------", string(module_name))
 		module_name = bytes.Trim(line_byte_no_space[1:line_lenth-1], " ")
@@ -60,7 +61,8 @@ func classification(line []byte) error {
 	}
 	if string(module_name) == "" {
 		//判断是否是注释
-		if string(line_byte_no_space[0:1]) == NOTE {
+
+		if strings.ContainsAny(NOTE, string(line_byte_no_space[0:1])) {
 			// 注释
 			notes = append(notes, line_byte_no_space)
 			return nil
@@ -74,7 +76,7 @@ func classification(line []byte) error {
 		notes = nil
 	} else {
 		// 组
-		if string(line_byte_no_space[0:1]) == NOTE {
+		if strings.ContainsAny(NOTE, string(line_byte_no_space[0:1])) {
 			// 注释
 			notes = append(notes, line_byte_no_space)
 			return nil

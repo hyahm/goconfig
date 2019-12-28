@@ -30,7 +30,7 @@ func FlushWrite() {
 	for _, v := range fl.Lines {
 		// 打印注释
 		for _, n := range v.note {
-			line := fmt.Sprintf("%s %s\n", NOTE, string(n))
+			line := fmt.Sprintf("%s %s\n", WELL, string(n))
 			fl.Write = append(fl.Write, []byte(line)...)
 		}
 		// 打印kv
@@ -42,7 +42,7 @@ func FlushWrite() {
 		fl.Write = append(fl.Write, []byte("\n")...)
 		// 打印组注释
 		for _, n := range v.note {
-			line := fmt.Sprintf("%s %s\n", NOTE, string(n))
+			line := fmt.Sprintf("%s %s\n", WELL, string(n))
 			fl.Write = append(fl.Write, []byte(line)...)
 		}
 		// 打印组
@@ -51,7 +51,7 @@ func FlushWrite() {
 		for _, gn := range v.group {
 			// 组key 注释
 			for _, nn := range gn.note {
-				line := fmt.Sprintf("%s %s\n", NOTE, string(nn))
+				line := fmt.Sprintf("%s %s\n", WELL, string(nn))
 				fl.Write = append(fl.Write, []byte(line)...)
 			}
 			// 打印kv
