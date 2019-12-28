@@ -6,14 +6,23 @@ read go config from key value file file
 go get github.com/hyahm/goconfig
 ```
 ### 注意
-- 一行是一个key ，value
-- 键值 用等号分割
-- 隐形支持json， 存入json []byte 
-- 注释使用 #开头
-- 建议使用Write* 方法写入， 格式更整齐
-- 已经存在的键值不会重复写入
+- 支持读取任何单行配置文件
+- 自定义符号
+- 支持默认值
+- 支持写入配置文件
 
 # 使用
+
+### 自定义符号, 加载配置文件之前定义
+```ini
+  SEP         = "="  // key 和 value 分隔符
+	NOTE        = "#;" // #开头的为注释
+	MODEL_START = "["  // 模块开头符号
+	MODEL_END   = "]"  // 模块结尾符号
+	WELL        = "#"  // 写入的注释， 
+```
+
+
 ### 读取配置
 > 先初始化 test.conf
 ```vim
