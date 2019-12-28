@@ -38,6 +38,20 @@ goconfig.ReadInt("mysql.port", 3306)    // return 3306
 goconfig.ReadString("mysql.db", "name")    // return name
 ```
 
+
+> 从[]byte 读取
+```vim
+```go
+x := `[mysql]
+host=192.168.80.2
+port=name
+`
+当然也可以是传过来的数据进行解析
+goconfig.InitFromBytes([]byte(x))
+goconfig.ReadString("mysql.host", "127.0.0.1") // return 192.168.80.2
+goconfig.ReadInt("mysql.port", 3306)    // return 3306
+goconfig.ReadString("mysql.db", "name")    // return name
+```
 ### 写入配置文件
 ```
 goconfig.InitWriteConf("write.conf")  // 与InitConf的区别是， 这个会清空里面原有数据
@@ -55,6 +69,10 @@ host = 127.0.0.1
 port = 3306
 db = name
 ```
+
+### 配置文件软加载方法
+err = Reload(),  仅限InitConf(file)  从文件读取的软加载， 自己写接口调用此方法， 配置文件会刷新， 如果配置文件有错则不会更新
+
 
 # 辅助方法， 方便调试
 PrintLines() // 打印读取的配置文件
