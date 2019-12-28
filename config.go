@@ -12,8 +12,8 @@ import (
 var (
 	SEP         = "="  // key 和 value 分隔符
 	NOTE        = "#;" // #开头的为注释
-	MODEL_START = "["  // [开头的为注释
-	MODEL_END   = "]"  // [开头的为注释
+	MODEL_START = "["  // 模块开头符号
+	MODEL_END   = "]"  // 模块结尾符号
 	WELL        = "#"  // 写入的注释
 )
 
