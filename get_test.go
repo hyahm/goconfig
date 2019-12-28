@@ -11,8 +11,23 @@ type getvalue struct {
 	shouldMatch interface{}
 }
 
+var x = `
+uint64 =9223372036854775808
+int64=123456223
+int=1234556223
+
+[one]
+float=0.25
+string=goconfig
+
+[two]
+bool=true
+password= "adlfjlskdf "
+`
+
 func TestGet(t *testing.T) {
-	InitConf("test.ini")
+	// 方便测试，
+	InitFromBytes([]byte(x))
 	tests := []getvalue{
 		{
 			title: "float64",
@@ -23,12 +38,6 @@ func TestGet(t *testing.T) {
 			title: "string",
 			key:   "one.string",
 			value: "goconfig",
-		},
-		{
-			title: "file",
-			key:   ".gitignore",
-			value: `.idea
-			go.mod`,
 		},
 		{
 			title: "uint64",

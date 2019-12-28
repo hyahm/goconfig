@@ -1,6 +1,7 @@
 package goconfig
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -43,7 +44,11 @@ var fl *config
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func Reload() error {
 	notes = nil
+
 	file := fl.Filepath
+	if file == "" {
+		return errors.New("not found config")
+	}
 	//判断文件目录是否存在
 	_, err := os.Stat(fl.Filepath)
 	if err != nil {
@@ -72,9 +77,9 @@ func Reload() error {
 	return nil
 }
 
-func InitConf(configpath string) {
+func InitConf(path string) {
 	notes = make([][]byte, 0)
-	fptmp := filepath.Clean(configpath)
+	fptmp := filepath.Clean(path)
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
 	if err != nil {
@@ -87,7 +92,7 @@ func InitConf(configpath string) {
 	// 创建文件
 	os.OpenFile(fptmp, os.O_CREATE, 0644)
 	fl = &config{
-		Filepath: configpath,
+		Filepath: fptmp,
 		Lines:    make([]*node, 0),
 		KeyValue: make(map[string][]byte),
 	}
@@ -95,6 +100,21 @@ func InitConf(configpath string) {
 	if err != nil {
 		panic(err)
 	}
+
+	if err := fl.readlines(); err != nil {
+		panic(err)
+	}
+}
+
+// 从bytes 解析， 不支持Reload方法
+func InitFromBytes(data []byte) {
+	notes = make([][]byte, 0)
+
+	fl = &config{
+		Lines:    make([]*node, 0),
+		KeyValue: make(map[string][]byte),
+	}
+	fl.Read = data
 
 	if err := fl.readlines(); err != nil {
 		panic(err)
