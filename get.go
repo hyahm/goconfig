@@ -208,7 +208,7 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 	if _, ok := fl.KeyValue[key]; !ok {
 		return this
 	}
-	i, err := strconv.Atoi(string(fl.KeyValue[key]))
+	i, err := strconv.ParseInt(string(fl.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}

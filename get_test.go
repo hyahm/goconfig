@@ -1,7 +1,9 @@
 package goconfig
 
 import (
+	"fmt"
 	"testing"
+	"time"
 )
 
 type getvalue struct {
@@ -15,6 +17,7 @@ var x = `
 uint64 =9223372036854775808
 int64=123456223
 int=1234556223
+dd=2
 
 [one]
 float=0.25
@@ -60,6 +63,11 @@ func TestGet(t *testing.T) {
 			value: true,
 		},
 		{
+			title: "Duration",
+			key:   "dd",
+			value: 2 * time.Second,
+		},
+		{
 			title: "password",
 			key:   "two.password",
 			value: "adlfjlskdf ",
@@ -75,6 +83,7 @@ func TestGet(t *testing.T) {
 func testGet(t *testing.T, test getvalue) {
 	switch test.value.(type) {
 	case string:
+		fmt.Println(test.title)
 		if test.key == "string" {
 			if test.value != ReadString(test.key) {
 				t.Error("fail")
@@ -92,19 +101,28 @@ func testGet(t *testing.T, test getvalue) {
 			}
 		}
 	case int:
+		fmt.Println(test.title)
 		if test.value != ReadInt(test.key) {
 			t.Error("fail")
 		}
 	case uint64:
+		fmt.Println(test.title)
 		if test.value != ReadUint64(test.key) {
 			t.Error("fail")
 		}
 	case int64:
+		fmt.Println(test.title)
 		if test.value != ReadInt64(test.key) {
 			t.Error("fail")
 		}
 	case float64:
+		fmt.Println(test.title)
 		if test.value != ReadFloat64(test.key) {
+			t.Error("fail")
+		}
+	case time.Duration:
+		fmt.Println(ReadDuration(test.key))
+		if test.value != ReadDuration(test.key)*time.Second {
 			t.Error("fail")
 		}
 	default:

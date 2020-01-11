@@ -44,11 +44,8 @@ func classification(line []byte) error {
 	//判断是否是组
 
 	line_lenth := len(line_byte_no_space)
-	fmt.Println("module_name", string(module_name))
-	fmt.Println("++++++++++++++", string(line_byte_no_space))
 	if string(line_byte_no_space[0:1]) == MODEL_START && string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
 		// 模块
-		fmt.Println("-----------", string(module_name))
 		module_name = bytes.Trim(line_byte_no_space[1:line_lenth-1], " ")
 		if _, ok := module_filter[string(module_name)]; ok {
 			return errors.New(fmt.Sprintf("group %s Repetition", string(module_name)))
