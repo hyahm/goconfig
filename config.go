@@ -2,7 +2,6 @@ package goconfig
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -21,22 +20,22 @@ var (
 
 type node struct {
 	key   string
-	value []byte
-	note  [][]byte
+	value string
+	note  []string
 }
 
 type groupLine struct {
-	group []*node  // 组的行
-	note  [][]byte // 组注释
-	name  []byte   // 组名
+	group []node   // 组的行
+	note  []string // 组注释
+	name  string   // 组名
 }
 
 type config struct {
-	Groups   []*groupLine      // 组
-	Lines    []*node           // 单key
+	Groups   []groupLine       // 组
+	Lines    []node            // 单key
 	Read     []byte            // 文件读出来的所有内容
 	Write    []byte            // 文件写的所有内容
-	KeyValue map[string][]byte // 键值缓存， key的值  key or group.key
+	KeyValue map[string]string // 键值缓存， key的值  key or group.key
 	Filepath string            // 配置文件路径
 }
 
@@ -61,15 +60,14 @@ func Reload() error {
 	// 检查是否有错
 	tmp := &config{
 		Filepath: file,
-		Lines:    make([]*node, 0),
-		KeyValue: make(map[string][]byte),
+		Lines:    make([]node, 0),
+		KeyValue: make(map[string]string),
 	}
 	tmp.Read, err = ioutil.ReadFile(file)
 	if err != nil {
 		return err
 	}
 	if err := tmp.readlines(); err != nil {
-		fmt.Println(err)
 		return err
 	}
 	// 更新值
@@ -79,7 +77,7 @@ func Reload() error {
 }
 
 func InitConf(path string) {
-	notes = make([][]byte, 0)
+	notes = make([]string, 0)
 	fptmp := filepath.Clean(path)
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
@@ -94,8 +92,8 @@ func InitConf(path string) {
 	os.OpenFile(fptmp, os.O_CREATE, 0644)
 	fl = &config{
 		Filepath: fptmp,
-		Lines:    make([]*node, 0),
-		KeyValue: make(map[string][]byte),
+		Lines:    make([]node, 0),
+		KeyValue: make(map[string]string),
 	}
 	fl.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
@@ -109,11 +107,11 @@ func InitConf(path string) {
 
 // 从bytes 解析， 不支持Reload方法
 func InitFromBytes(data []byte) {
-	notes = make([][]byte, 0)
+	notes = make([]string, 0)
 
 	fl = &config{
-		Lines:    make([]*node, 0),
-		KeyValue: make(map[string][]byte),
+		Lines:    make([]node, 0),
+		KeyValue: make(map[string]string),
 	}
 	fl.Read = data
 
@@ -123,7 +121,7 @@ func InitFromBytes(data []byte) {
 }
 
 func InitWriteConf(configpath string) {
-	notes = make([][]byte, 0)
+	notes = make([]string, 0)
 	fptmp := filepath.Clean(configpath)
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
@@ -138,8 +136,17 @@ func InitWriteConf(configpath string) {
 
 	fl = &config{
 		Filepath: configpath,
-		Lines:    make([]*node, 0),
-		KeyValue: make(map[string][]byte),
+		Lines:    make([]node, 0),
+		KeyValue: make(map[string]string),
 	}
 
+}
+
+func InitBytes() {
+	notes = make([]string, 0)
+	fl = &config{
+		Filepath: "",
+		Lines:    make([]node, 0),
+		KeyValue: make(map[string]string),
+	}
 }

@@ -23,7 +23,7 @@ func ReadFloat64(key string, value ...float64) float64 {
 
 	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatFloat(this, 'E', -1, 64)
-		fl.KeyValue[key] = []byte(str)
+		fl.KeyValue[key] = str
 		return this
 	}
 	f64, err := strconv.ParseFloat(string(fl.KeyValue[key]), 64)
@@ -42,7 +42,7 @@ func ReadFile(key string, value ...string) string {
 		this = value[0]
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = []byte(this)
+		fl.KeyValue[key] = this
 	}
 	// 读取文件
 	bs, err := ioutil.ReadFile(string(fl.KeyValue[key]))
@@ -61,7 +61,7 @@ func ReadString(key string, value ...string) string {
 		this = value[0]
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = []byte(this)
+		fl.KeyValue[key] = this
 		return this
 	}
 	return string(fl.KeyValue[key])
@@ -78,7 +78,7 @@ func ReadInt(key string, value ...int) int {
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.Itoa(this)
-		fl.KeyValue[key] = []byte(str)
+		fl.KeyValue[key] = str
 		return this
 	}
 	i, err := strconv.Atoi(string(fl.KeyValue[key]))
@@ -98,7 +98,7 @@ func ReadUint64(key string, value ...uint64) uint64 {
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
-		fl.KeyValue[key] = []byte(str)
+		fl.KeyValue[key] = str
 		return this
 	}
 	i, err := strconv.ParseUint(string(fl.KeyValue[key]), 10, 64)
@@ -118,7 +118,7 @@ func ReadPassword(key string, value ...string) string {
 		this = value[0]
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = []byte(fmt.Sprintf(`"%s"`, this))
+		fl.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
 		return this
 	}
 	v := fl.KeyValue[key]
@@ -140,9 +140,9 @@ func ReadBool(key string, value ...bool) bool {
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
 		if this {
-			fl.KeyValue[key] = []byte("true")
+			fl.KeyValue[key] = "true"
 		} else {
-			fl.KeyValue[key] = []byte("false")
+			fl.KeyValue[key] = "false"
 		}
 		return this
 	}
@@ -165,7 +165,7 @@ func ReadInt64(key string, value ...int64) int64 {
 	}
 	if _, ok := fl.KeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
-		fl.KeyValue[key] = []byte(str)
+		fl.KeyValue[key] = str
 		return this
 	}
 	i, err := strconv.ParseInt(string(fl.KeyValue[key]), 10, 64)
@@ -186,7 +186,7 @@ func ReadBytes(key string, value ...[]byte) []byte {
 	if _, ok := fl.KeyValue[key]; !ok {
 		return this
 	}
-	return fl.KeyValue[key]
+	return []byte(fl.KeyValue[key])
 }
 
 func ReadEnv(key string, value ...string) (s string) {

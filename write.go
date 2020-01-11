@@ -6,27 +6,33 @@ import (
 )
 
 // 格式文件, sit 0, 1 ,
-func writeFile(key, value, module string, notes ...[]byte) {
+func writeFile(key, value, module string, notes ...string) {
 	// 判断是不是组
 	if module == "" {
 		//先添加key
-		fl.newKeyValue(key, []byte(value), notes...)
+		fl.newKeyValue(key, value, notes...)
 	} else {
 		// 组
 		for i, g := range fl.Groups {
 			if string(g.name) == module {
-				fl.addGroupKeyValue(i, key, []byte(value), notes...)
+				fl.addGroupKeyValue(i, key, value, notes...)
 				return
 			}
 		}
 		// 不存在就新建
-		fl.newGroupKeyValue([]byte(module), key, []byte(value), notes...)
+		fl.newGroupKeyValue(module, key, value, notes...)
 
 	}
 }
 
 func FlushWrite() {
+	content := getWrite()
+	if err := ioutil.WriteFile(fl.Filepath, content, 0644); err != nil {
+		panic(err)
+	}
+}
 
+func getWrite() []byte {
 	for _, v := range fl.Lines {
 		// 打印注释
 		for _, n := range v.note {
@@ -59,7 +65,10 @@ func FlushWrite() {
 			fl.Write = append(fl.Write, []byte(kv)...)
 		}
 	}
-	if err := ioutil.WriteFile(fl.Filepath, fl.Write, 0644); err != nil {
-		panic(err)
-	}
+	return fl.Write
+}
+
+func GetBytesAndClear() []byte {
+	defer func() { fl = nil }()
+	return getWrite()
 }

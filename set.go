@@ -24,15 +24,12 @@ func update(key, value string, notes ...string) {
 	} else {
 		subkey = key
 	}
-	bnotes := make([][]byte, 0 )
-	for _,v := range notes {
-		bnotes = append(bnotes, []byte(v))
-	}
+
 	if _, ok := fl.KeyValue[key]; !ok {
 		// 更新文件
-		writeFile(subkey, value, module, bnotes...)
+		writeFile(subkey, value, module, notes...)
 		// 更新map
-		fl.KeyValue[key] = []byte(value)
+		fl.KeyValue[key] = value
 	}
 }
 
@@ -45,8 +42,7 @@ func WriteFloat(key string, value float64, notes ...string) {
 
 }
 
-
-func WriteString(key string, value string, notes ...string)  {
+func WriteString(key string, value string, notes ...string) {
 	if fl == nil {
 		panic("init first")
 	}
@@ -55,7 +51,7 @@ func WriteString(key string, value string, notes ...string)  {
 }
 
 // 返回int
-func WriteInt(key string, value int, notes ...string)  {
+func WriteInt(key string, value int, notes ...string) {
 	if fl == nil {
 		panic("init first")
 	}
@@ -69,7 +65,7 @@ func WriteUint64(key string, value uint64, notes ...string) {
 		panic("init first")
 	}
 	s := strconv.FormatUint(value, 10)
-	update(key, s,notes...)
+	update(key, s, notes...)
 }
 
 // 2边需要用到引号
@@ -92,7 +88,7 @@ func WriteBool(key string, value bool, notes ...string) {
 	update(key, s, notes...)
 }
 
-func WriteInt64(key string, value int64, notes ...string)  {
+func WriteInt64(key string, value int64, notes ...string) {
 	if fl == nil {
 		panic("init first")
 	}
@@ -113,16 +109,11 @@ func WriteNotesForModule(name string, notes ...string) {
 	if fl == nil {
 		panic("init first")
 	}
-	bnotes := make([][]byte, 0 )
-	for _,v := range notes {
-		bnotes = append(bnotes, []byte(v))
-	}
-	for _,v := range fl.Groups {
+	for _, v := range fl.Groups {
 		if string(v.name) == name {
-			v.note = append(v.note, bnotes...)
+			v.note = append(v.note, notes...)
+			return
 		}
 	}
-
+	fl.newGroup(name, notes...)
 }
-
-

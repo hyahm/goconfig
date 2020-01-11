@@ -13,9 +13,9 @@ import (
 
 //
 //var fis []*fileinfo
-var module_name []byte
+var module_name string
 var module_filter map[string]bool
-var notes [][]byte
+var notes []string
 
 func (fl *config) readlines() error {
 	module_filter = make(map[string]bool)
@@ -46,11 +46,11 @@ func classification(line []byte) error {
 	line_lenth := len(line_byte_no_space)
 	if string(line_byte_no_space[0:1]) == MODEL_START && string(line_byte_no_space[line_lenth-1:line_lenth]) == MODEL_END {
 		// 模块
-		module_name = bytes.Trim(line_byte_no_space[1:line_lenth-1], " ")
+		module_name = string(bytes.Trim(line_byte_no_space[1:line_lenth-1], " "))
 		if _, ok := module_filter[string(module_name)]; ok {
 			return errors.New(fmt.Sprintf("group %s Repetition", string(module_name)))
 		}
-		fl.newGroup(module_name, notes...)
+		fl.newGroup(string(module_name), notes...)
 		notes = nil
 		module_filter[string(module_name)] = true
 		return nil
@@ -61,7 +61,7 @@ func classification(line []byte) error {
 
 		if strings.ContainsAny(NOTE, string(line_byte_no_space[0:1])) {
 			// 注释
-			notes = append(notes, line_byte_no_space)
+			notes = append(notes, string(line_byte_no_space))
 			return nil
 		}
 		// 添加kv
@@ -69,13 +69,13 @@ func classification(line []byte) error {
 		if err != nil {
 			return err
 		}
-		fl.newKeyValue(k, v, notes...)
+		fl.newKeyValue(k, string(v), notes...)
 		notes = nil
 	} else {
 		// 组
 		if strings.ContainsAny(NOTE, string(line_byte_no_space[0:1])) {
 			// 注释
-			notes = append(notes, line_byte_no_space)
+			notes = append(notes, string(line_byte_no_space))
 			return nil
 		}
 		k, v, err := getKeyValue(line_byte_no_space)
@@ -85,7 +85,7 @@ func classification(line []byte) error {
 		for i, g := range fl.Groups {
 			//在组里面就添加
 			if string(g.name) == string(module_name) {
-				fl.addGroupKeyValue(i, k, v, notes...)
+				fl.addGroupKeyValue(i, k, string(v), notes...)
 				notes = nil
 				return nil
 			}
@@ -124,6 +124,6 @@ func getKeyValue(line []byte) (string, []byte, error) {
 		return "", nil, nil
 	}
 
-	fl.KeyValue[k] = value
+	fl.KeyValue[k] = string(value)
 	return string(key), value, nil
 }
