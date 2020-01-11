@@ -98,7 +98,6 @@ func classification(line []byte) error {
 // 写入到
 func getKeyValue(line []byte) (string, []byte, error) {
 	// 存入值到 configKeyValue， 更新 fis
-	fmt.Println(string(line))
 	index := bytes.Index(line, []byte(SEP))
 	if index == -1 {
 		return "", nil, errors.New(fmt.Sprintf("key error, not found =, line: %s", string(line)))
