@@ -13,14 +13,12 @@ func update(key, value string, notes ...string) {
 	if strings.Contains(key, " ") {
 		panic("key error , not allow contain space")
 	}
+	// 找到最后一个.的key
 	c := strings.Count(key, ".")
-	if c >= 2 {
-		panic("key error , not allow contain point more than one ")
-	}
-	if c == 1 {
-		kv := strings.Split(key, ".")
-		module = kv[0]
-		subkey = kv[1]
+	if c >= 1 {
+		i := strings.LastIndex(key, ".")
+		module = key[:i]
+		subkey = key[i+1:]
 	} else {
 		subkey = key
 	}
