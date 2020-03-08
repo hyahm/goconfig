@@ -6,10 +6,9 @@ read go config from key value file file
 go get github.com/hyahm/goconfig
 ```
 ### 注意
-- key和module不能有.
+- key不能有.
 - 支持读取任何单行配置文件
 - 自定义符号
-- 支持默认值
 - 支持写入配置文件
 
 # 使用
