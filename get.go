@@ -216,7 +216,7 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 }
 
 // 末尾不带/
-func ReadPath(key string, value ...string) string {
+func ReadWithoutEndSlash(key string, value ...string) string {
 	if fl == nil {
 		panic("init first")
 	}
@@ -241,7 +241,7 @@ func ReadPath(key string, value ...string) string {
 }
 
 // 末尾带/
-func ReadUrl(key string, value ...string) string {
+func ReadWithEndSlash(key string, value ...string) string {
 	if fl == nil {
 		panic("init first")
 	}
