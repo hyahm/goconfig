@@ -6,7 +6,6 @@ read go config from key value file file， suport ini, json, yaml
 go get github.com/hyahm/goconfig
 ```
 ### 注意
-- key不能有.
 - 支持读取任何单行配置文件
 - 自定义符号
 - 支持写入配置文件
@@ -24,12 +23,13 @@ WELL        = "#"  // 写入的注释，
 
 
 ### 读取配置
-> 先初始化 test.conf
+> test.ini
 ```vim
 [mysql]
 host=192.168.80.2
 port=name
 ```
+> test.json
 ```json
 {
   "mysql": {
@@ -38,6 +38,7 @@ port=name
   }
 }
 ```
+> test.yaml
 ```yaml
 mysql:
   host: 192.168.80.2
