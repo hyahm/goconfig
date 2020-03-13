@@ -1,5 +1,5 @@
 # goconfig
-read go config from key value file file
+read go config from key value file file， suport ini, json, yaml
 
 ### 安装
 ```
@@ -13,7 +13,7 @@ go get github.com/hyahm/goconfig
 
 # 使用
 
-### 自定义符号, 加载配置文件之前定义
+### 自定义符号, 加载配置文件之前定义, 只对ini文件的kv值有效
 ```ini
 SEP         = "="  // key 和 value 分隔符
 NOTE        = "#;" // #开头的为注释
@@ -29,6 +29,19 @@ WELL        = "#"  // 写入的注释，
 [mysql]
 host=192.168.80.2
 port=name
+```
+```json
+{
+  "mysql": {
+    "host": "192.168.80.2",
+    "port": "name"
+  }
+}
+```
+```yaml
+mysql:
+  host: 192.168.80.2
+  port: name
 ```
 ```
 第二个参数表示， 如果不存在key， 或者读取的值不符合读取类型的默认值
