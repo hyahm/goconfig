@@ -2,9 +2,12 @@ package goconfig
 
 import (
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"sigs.k8s.io/yaml"
 )
 
 //const middle = "========="
@@ -15,8 +18,6 @@ var (
 	MODEL_END   = "]"  // 模块结尾符号
 	WELL        = "#"  // 写入的注释
 )
-
-// 读取配置文件
 
 type node struct {
 	key   string
@@ -30,6 +31,7 @@ type groupLine struct {
 	name  string   // 组名
 }
 
+// 这个是ini的config
 type config struct {
 	Groups   []groupLine       // 组
 	Lines    []node            // 单key
@@ -37,20 +39,22 @@ type config struct {
 	Write    []byte            // 文件写的所有内容
 	KeyValue map[string]string // 键值缓存， key的值  key or group.key
 	Filepath string            // 配置文件路径
+	sjson    map[string]interface{}
 }
 
-var fl *config
+var Config *config
+var tp string = "ini"
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func Reload() error {
-	notes = nil
+	Config = nil
 
-	file := fl.Filepath
+	file := Config.Filepath
 	if file == "" {
 		return errors.New("not found config")
 	}
 	//判断文件目录是否存在
-	_, err := os.Stat(fl.Filepath)
+	_, err := os.Stat(Config.Filepath)
 	if err != nil {
 		// 不存在就先创建目录
 		return err
@@ -67,61 +71,98 @@ func Reload() error {
 	if err != nil {
 		return err
 	}
-	if err := tmp.readlines(); err != nil {
+	if err := tmp.readIni(); err != nil {
 		return err
 	}
 	// 更新值
-	fl = nil
-	fl = tmp
+	Config = nil
+	Config = tmp
 	return nil
 }
 
-func InitConf(path string) {
-	notes = make([]string, 0)
+func InitConf(path string, typ ...string) error {
 	fptmp := filepath.Clean(path)
+
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
 	if err != nil {
 		// 不存在就先创建目录
 		if err := os.MkdirAll(filepath.Dir(fptmp), 0755); err != nil {
-			panic(err)
+			return err
 		}
 
 	}
 	// 创建文件
 	os.OpenFile(fptmp, os.O_CREATE, 0644)
-	fl = &config{
+	Config = &config{
 		Filepath: fptmp,
 		Lines:    make([]node, 0),
 		KeyValue: make(map[string]string),
 	}
-	fl.Read, err = ioutil.ReadFile(fptmp)
+	Config.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
-		panic(err)
+		return err
 	}
-
-	if err := fl.readlines(); err != nil {
-		panic(err)
+	if len(typ) > 0 {
+		switch typ[0] {
+		case "json":
+			tp = "json"
+			if err := Config.readJson(); err != nil {
+				return err
+			}
+		case "yaml":
+			tp = "yaml"
+			j, err := yaml.YAMLToJSON(Config.Read)
+			if err != nil {
+				return err
+			}
+			fmt.Println("convent to json")
+			Config.Read = j
+			fmt.Println(string(j))
+			if err := Config.readJson(); err != nil {
+				return err
+			}
+		default:
+			if err := Config.readIni(); err != nil {
+				return err
+			}
+		}
 	}
+	return nil
 }
 
-// 从bytes 解析， 不支持Reload方法
-func InitFromBytes(data []byte) {
-	notes = make([]string, 0)
+// 从bytes 解析， Reload方法
+func InitFromBytes(data []byte, typ ...string) error {
 
-	fl = &config{
+	Config = &config{
 		Lines:    make([]node, 0),
 		KeyValue: make(map[string]string),
 	}
-	fl.Read = data
+	Config.Read = data
+	if len(typ) > 0 {
+		switch typ[0] {
+		case "json":
+			tp = "json"
+		case "yaml":
+			tp = "yaml"
+			j, err := yaml.JSONToYAML(Config.Read)
+			if err != nil {
+				return err
+			}
+			Config.Read = j
 
-	if err := fl.readlines(); err != nil {
-		panic(err)
+		default:
+			if err := Config.readIni(); err != nil {
+				return err
+			}
+		}
 	}
+	return nil
 }
 
-func InitWriteConf(configpath string) {
-	notes = make([]string, 0)
+// 初始化写入文件的方法， 会清空内容
+func InitWriteConf(configpath string, typ ...string) {
+
 	fptmp := filepath.Clean(configpath)
 	//判断文件目录是否存在
 	_, err := os.Stat(filepath.Dir(fptmp))
@@ -130,11 +171,20 @@ func InitWriteConf(configpath string) {
 		if err := os.MkdirAll(filepath.Dir(fptmp), 0755); err != nil {
 			panic(err)
 		}
-
 	}
 	os.Remove(fptmp)
 
-	fl = &config{
+	if len(typ) > 0 {
+		switch typ[0] {
+		case "json":
+			tp = "json"
+		case "yaml":
+			tp = "json"
+		default:
+		}
+	}
+
+	Config = &config{
 		Filepath: configpath,
 		Lines:    make([]node, 0),
 		KeyValue: make(map[string]string),
@@ -142,11 +192,11 @@ func InitWriteConf(configpath string) {
 
 }
 
-func InitBytes() {
-	notes = make([]string, 0)
-	fl = &config{
-		Filepath: "",
-		Lines:    make([]node, 0),
-		KeyValue: make(map[string]string),
-	}
-}
+//
+// func InitBytes() {
+// 	Config = &config{
+// 		Filepath: "",
+// 		Lines:    make([]node, 0),
+// 		KeyValue: make(map[string]string),
+// 	}
+// }

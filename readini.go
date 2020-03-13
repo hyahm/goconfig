@@ -10,6 +10,7 @@ import (
 // 全部统一 utf-8格式
 // 文件操作
 // 用于写文件
+// 读取ini文件
 
 //
 //var fis []*fileinfo
@@ -17,12 +18,11 @@ var module_name string
 var module_filter map[string]bool
 var notes []string
 
-func (fl *config) readlines() error {
-	module_filter = make(map[string]bool)
+func (c *config) readIni() error {
 	// 去掉windows换行的\r
-	fl.Read = bytes.ReplaceAll(fl.Read, []byte("\r"), []byte(""))
+	c.Read = bytes.ReplaceAll(c.Read, []byte("\r"), []byte(""))
 
-	lines := bytes.Split(fl.Read, []byte("\n"))
+	lines := bytes.Split(c.Read, []byte("\n"))
 	for i := 0; i < len(lines); i++ {
 		// 分类
 		if err := classification(lines[i]); err != nil {
@@ -35,6 +35,7 @@ func (fl *config) readlines() error {
 func classification(line []byte) error {
 	// 分大类
 	//去掉2边的空格
+	module_filter = make(map[string]bool)
 	line_byte_no_space := bytes.Trim(line, " ")
 	// 忽略注释和空行
 	if string(line_byte_no_space) == "" {
@@ -50,7 +51,7 @@ func classification(line []byte) error {
 		if _, ok := module_filter[string(module_name)]; ok {
 			return errors.New(fmt.Sprintf("group %s Repetition", string(module_name)))
 		}
-		fl.newGroup(string(module_name), notes...)
+		Config.newGroup(string(module_name), notes...)
 		notes = nil
 		module_filter[string(module_name)] = true
 		return nil
@@ -69,7 +70,7 @@ func classification(line []byte) error {
 		if err != nil {
 			return err
 		}
-		fl.newKeyValue(k, string(v), notes...)
+		Config.newKeyValue(k, string(v), notes...)
 		notes = nil
 	} else {
 		// 组
@@ -82,10 +83,10 @@ func classification(line []byte) error {
 		if err != nil {
 			return err
 		}
-		for i, g := range fl.Groups {
+		for i, g := range Config.Groups {
 			//在组里面就添加
 			if string(g.name) == string(module_name) {
-				fl.addGroupKeyValue(i, k, string(v), notes...)
+				Config.addGroupKeyValue(i, k, string(v), notes...)
 				notes = nil
 				return nil
 			}
@@ -98,7 +99,7 @@ func classification(line []byte) error {
 // 写入到
 func getKeyValue(line []byte) (string, []byte, error) {
 	// 存入值到 configKeyValue， 更新 fis
-		index := bytes.Index(line, []byte(SEP))
+	index := bytes.Index(line, []byte(SEP))
 	if index == -1 {
 		return "", nil, errors.New(fmt.Sprintf("key error, not found =, line: %s", string(line)))
 	}
@@ -117,12 +118,12 @@ func getKeyValue(line []byte) (string, []byte, error) {
 	if string(module_name) != "" {
 		k = string(module_name) + "." + k
 	}
-	if _, ok := fl.KeyValue[k]; ok {
+	if _, ok := Config.KeyValue[k]; ok {
 		// 去掉重复项
 		fmt.Println(fmt.Sprintf("key duplicate, key: %s", string(key)))
 		return "", nil, nil
 	}
 
-	fl.KeyValue[k] = string(value)
+	Config.KeyValue[k] = string(value)
 	return string(key), value, nil
 }

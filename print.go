@@ -3,7 +3,7 @@ package goconfig
 import "fmt"
 
 func PrintLines() {
-	for _, v := range fl.Lines {
+	for _, v := range Config.Lines {
 		// 打印注释
 		for _, n := range v.note {
 			fmt.Println("# ", string(n))
@@ -11,9 +11,9 @@ func PrintLines() {
 		// 打印kv
 		fmt.Println(v.key, ":", string(v.value))
 	}
-	for _, v := range fl.Groups {
+	for _, v := range Config.Groups {
 		// 打印组注释
-		for _, n :=range v.note {
+		for _, n := range v.note {
 			fmt.Println(string(n))
 		}
 		// 打印组
@@ -21,7 +21,7 @@ func PrintLines() {
 		for _, gn := range v.group {
 			// 组key 注释
 			for _, nn := range gn.note {
-				fmt.Println("# ",string(nn))
+				fmt.Println("# ", string(nn))
 			}
 			// 打印kv
 			fmt.Println(gn.key, ":", string(gn.value))
@@ -30,7 +30,7 @@ func PrintLines() {
 }
 
 func PrintKeyValue() {
-	for k, v := range fl.KeyValue {
-		fmt.Println(k,":",string(v))
+	for k, v := range Config.KeyValue {
+		fmt.Println(k, ":", string(v))
 	}
 }

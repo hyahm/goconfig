@@ -12,7 +12,7 @@ import (
 // 如果不存在key， 或者value 是错的才选用默认值
 
 func ReadFloat64(key string, value ...float64) float64 {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	// key 不能包含多个.
@@ -21,12 +21,12 @@ func ReadFloat64(key string, value ...float64) float64 {
 		this = value[0]
 	}
 
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.FormatFloat(this, 'E', -1, 64)
-		fl.KeyValue[key] = str
+		Config.KeyValue[key] = str
 		return this
 	}
-	f64, err := strconv.ParseFloat(string(fl.KeyValue[key]), 64)
+	f64, err := strconv.ParseFloat(string(Config.KeyValue[key]), 64)
 	if err != nil {
 		return this
 	}
@@ -34,18 +34,18 @@ func ReadFloat64(key string, value ...float64) float64 {
 }
 
 func ReadFile(key string, value ...string) string {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = this
+	if _, ok := Config.KeyValue[key]; !ok {
+		Config.KeyValue[key] = this
 	}
 	// 读取文件
-	bs, err := ioutil.ReadFile(string(fl.KeyValue[key]))
+	bs, err := ioutil.ReadFile(string(Config.KeyValue[key]))
 	if err != nil {
 		return ""
 	}
@@ -53,35 +53,35 @@ func ReadFile(key string, value ...string) string {
 }
 
 func ReadString(key string, value ...string) string {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = this
+	if _, ok := Config.KeyValue[key]; !ok {
+		Config.KeyValue[key] = this
 		return this
 	}
-	return string(fl.KeyValue[key])
+	return string(Config.KeyValue[key])
 }
 
 // 返回int
 func ReadInt(key string, value ...int) int {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this int
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.Itoa(this)
-		fl.KeyValue[key] = str
+		Config.KeyValue[key] = str
 		return this
 	}
-	i, err := strconv.Atoi(string(fl.KeyValue[key]))
+	i, err := strconv.Atoi(string(Config.KeyValue[key]))
 	if err != nil {
 		return this
 	}
@@ -89,19 +89,19 @@ func ReadInt(key string, value ...int) int {
 }
 
 func ReadUint64(key string, value ...uint64) uint64 {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this uint64
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
-		fl.KeyValue[key] = str
+		Config.KeyValue[key] = str
 		return this
 	}
-	i, err := strconv.ParseUint(string(fl.KeyValue[key]), 10, 64)
+	i, err := strconv.ParseUint(string(Config.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -110,18 +110,18 @@ func ReadUint64(key string, value ...uint64) uint64 {
 
 // 2边需要用到引号
 func ReadPassword(key string, value ...string) string {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this string
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
-		fl.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
+	if _, ok := Config.KeyValue[key]; !ok {
+		Config.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
 		return this
 	}
-	v := fl.KeyValue[key]
+	v := Config.KeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
@@ -131,24 +131,24 @@ func ReadPassword(key string, value ...string) string {
 }
 
 func ReadBool(key string, value ...bool) bool {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this bool
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		if this {
-			fl.KeyValue[key] = "true"
+			Config.KeyValue[key] = "true"
 		} else {
-			fl.KeyValue[key] = "false"
+			Config.KeyValue[key] = "false"
 		}
 		return this
 	}
-	if string(fl.KeyValue[key]) == "true" {
+	if string(Config.KeyValue[key]) == "true" {
 		return true
-	} else if string(fl.KeyValue[key]) == "false" {
+	} else if string(Config.KeyValue[key]) == "false" {
 		return false
 	} else {
 		return this
@@ -156,19 +156,19 @@ func ReadBool(key string, value ...bool) bool {
 }
 
 func ReadInt64(key string, value ...int64) int64 {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this int64
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
-		fl.KeyValue[key] = str
+		Config.KeyValue[key] = str
 		return this
 	}
-	i, err := strconv.ParseInt(string(fl.KeyValue[key]), 10, 64)
+	i, err := strconv.ParseInt(string(Config.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -176,17 +176,17 @@ func ReadInt64(key string, value ...int64) int64 {
 }
 
 func ReadBytes(key string, value ...[]byte) []byte {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this []byte
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
-	return []byte(fl.KeyValue[key])
+	return []byte(Config.KeyValue[key])
 }
 
 func ReadEnv(key string, value ...string) (s string) {
@@ -198,17 +198,17 @@ func ReadEnv(key string, value ...string) (s string) {
 }
 
 func ReadDuration(key string, value ...time.Duration) time.Duration {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this time.Duration
 	if len(value) > 0 {
 		this = value[0]
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
-	i, err := strconv.ParseInt(string(fl.KeyValue[key]), 10, 64)
+	i, err := strconv.ParseInt(string(Config.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
 	}
@@ -217,7 +217,7 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 
 // 末尾不带/
 func ReadWithoutEndSlash(key string, value ...string) string {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this string
@@ -229,10 +229,10 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 			this = value[0]
 		}
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
-	this = string(fl.KeyValue[key])
+	this = string(Config.KeyValue[key])
 	l := len(this)
 	if this[l:l] == "/" {
 		this = this[:l-1]
@@ -242,7 +242,7 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 
 // 末尾带/
 func ReadWithEndSlash(key string, value ...string) string {
-	if fl == nil {
+	if Config == nil {
 		panic("init first")
 	}
 	var this string
@@ -254,10 +254,10 @@ func ReadWithEndSlash(key string, value ...string) string {
 			this = value[0]
 		}
 	}
-	if _, ok := fl.KeyValue[key]; !ok {
+	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
-	this = string(fl.KeyValue[key])
+	this = string(Config.KeyValue[key])
 	l := len(this)
 	if this[l:l] != "/" {
 		this = this + "/"
