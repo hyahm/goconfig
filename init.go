@@ -60,6 +60,7 @@ func Reload() error {
 		return err
 
 	}
+
 	// 清空数据
 	// 检查是否有错
 	tmp := &config{
@@ -71,12 +72,29 @@ func Reload() error {
 	if err != nil {
 		return err
 	}
-	if err := tmp.readIni(); err != nil {
-		return err
+	switch tp {
+	case "json":
+		tp = "json"
+		if err := tmp.readJson(); err != nil {
+			return err
+		}
+	case "yaml":
+		tp = "yaml"
+		j, err := yaml.YAMLToJSON(Config.Read)
+		if err != nil {
+			return err
+		}
+		tmp.Read = j
+		if err := tmp.readJson(); err != nil {
+			return err
+		}
+	default:
+		if err := tmp.readIni(); err != nil {
+			return err
+		}
 	}
-	// 更新值
-	Config = nil
 	Config = tmp
+	// 更新值
 	return nil
 }
 
