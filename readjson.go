@@ -29,8 +29,6 @@ func (c *config) parseJson(module string, value map[string]interface{}) error {
 	for k, v := range value {
 		// refType := reflect.TypeOf(v)
 		refValue := reflect.ValueOf(v)
-		fmt.Println(k)
-		fmt.Println(refValue.Kind())
 		switch refValue.Kind() {
 		case reflect.Float64, reflect.Float32:
 			// 如果是整数， 去掉后面的

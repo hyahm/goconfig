@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hyahm/goconfig"
@@ -18,10 +19,12 @@ func main() {
 	// goconfig.InitWriteConf("test.conf")
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 	// goconfig.FlushWrite()
-	if err := goconfig.InitConf("test.yaml", "yaml"); err != nil {
+	if err := goconfig.InitConf("test.json", "json"); err != nil {
 		log.Fatal(err)
 	}
 
 	// goconfig.InitConf("write.conf") // 与InitConf的区别是， 这个会清空里面原有数据
-	goconfig.PrintKeyValue()
+	// goconfig.PrintKeyValue()
+	fmt.Println(goconfig.ReadBool("episode.ended"))
+	fmt.Println(goconfig.ReadString("processing.postparam.thumb_hor"))
 }

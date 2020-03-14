@@ -134,7 +134,6 @@ func InitConf(path string, typ ...string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Println("convent to json")
 			Config.Read = j
 			fmt.Println(string(j))
 			if err := Config.readJson(); err != nil {
