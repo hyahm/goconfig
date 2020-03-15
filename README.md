@@ -46,7 +46,7 @@ mysql:
   port: name
 ```
 ```
-第二个参数表示， 如果不存在key， 或者读取的值不符合读取类型的默认值
+第一个参数后面表示默认值，默认支持长度为3， 如果不存在key， 或者读取的值不符合读取类型的默认值
 goconfig.InitConf("test.conf")
 goconfig.ReadString("mysql.host", "127.0.0.1") // return 192.168.80.2
 goconfig.ReadInt("mysql.port", 3306)    // return 3306
