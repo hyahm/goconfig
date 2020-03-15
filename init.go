@@ -200,14 +200,13 @@ func InitWriteConf(configpath string, t typ) {
 	case YAML:
 		tp = t
 	default:
-	}
 
+	}
 	Config = &config{
 		Filepath: configpath,
 		Lines:    make([]node, 0),
 		KeyValue: make(map[string]string),
 	}
-
 }
 
 //
