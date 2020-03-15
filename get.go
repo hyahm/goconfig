@@ -17,6 +17,16 @@ func ReadFloat64(key string, value ...float64) float64 {
 	}
 	// key 不能包含多个.
 	var this float64
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
+	}
 	if len(value) > 0 {
 		this = value[0]
 	}
@@ -38,8 +48,15 @@ func ReadFile(key string, value ...string) string {
 		panic("init first")
 	}
 	var this string
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		Config.KeyValue[key] = this
@@ -57,8 +74,15 @@ func ReadString(key string, value ...string) string {
 		panic("init first")
 	}
 	var this string
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		Config.KeyValue[key] = this
@@ -73,8 +97,15 @@ func ReadInt(key string, value ...int) int {
 		panic("init first")
 	}
 	var this int
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.Itoa(this)
@@ -93,8 +124,15 @@ func ReadUint64(key string, value ...uint64) uint64 {
 		panic("init first")
 	}
 	var this uint64
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
@@ -114,8 +152,15 @@ func ReadPassword(key string, value ...string) string {
 		panic("init first")
 	}
 	var this string
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		Config.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
@@ -135,8 +180,15 @@ func ReadBool(key string, value ...bool) bool {
 		panic("init first")
 	}
 	var this bool
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		if this {
@@ -160,8 +212,15 @@ func ReadInt64(key string, value ...int64) int64 {
 		panic("init first")
 	}
 	var this int64
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
@@ -180,8 +239,15 @@ func ReadBytes(key string, value ...[]byte) []byte {
 		panic("init first")
 	}
 	var this []byte
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if string(v) != string(this) {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		return this
@@ -202,8 +268,15 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 		panic("init first")
 	}
 	var this time.Duration
-	if len(value) > 0 {
-		this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		return this
@@ -221,21 +294,31 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 		panic("init first")
 	}
 	var this string
-	if len(value) > 0 {
-		l := len(value[0])
-		if value[0][l-1:l] == "/" {
-			this = value[0][:l-1]
-		} else {
-			this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
+	}
+	if this != "" {
+		l := len(this)
+		if this[l-1:l] == "/" {
+			this = this[:l-1]
 		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
 	this = string(Config.KeyValue[key])
-	l := len(this)
-	if this[l:l] == "/" {
-		this = this[:l-1]
+	if this != "" {
+		l := len(this)
+		if this[l-1:l] == "/" {
+			this = this[:l-1]
+		}
 	}
 	return this
 }
@@ -246,21 +329,31 @@ func ReadWithEndSlash(key string, value ...string) string {
 		panic("init first")
 	}
 	var this string
-	if len(value) > 0 {
-		l := len(value[0])
-		if value[0][l-1:l] != "/" {
-			this = value[0] + "/"
-		} else {
-			this = value[0]
+	for i, v := range value {
+		// 最多3个， 超过了就使用默认值
+		if i == Deep {
+			break
+		}
+		if v != this {
+			this = v
+			break
+		}
+	}
+	if this != "" {
+		l := len(this)
+		if this[l-1:l] != "/" {
+			this = this + "/"
 		}
 	}
 	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
 	this = string(Config.KeyValue[key])
-	l := len(this)
-	if this[l:l] != "/" {
-		this = this + "/"
+	if this != "" {
+		l := len(this)
+		if this[l-1:l] != "/" {
+			this = this + "/"
+		}
 	}
 	return this
 }

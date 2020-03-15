@@ -27,4 +27,5 @@ func main() {
 	// goconfig.PrintKeyValue()
 	fmt.Println(goconfig.ReadBool("episode.ended"))
 	fmt.Println(goconfig.ReadString("processing.postparam.thumb_hor"))
+	fmt.Println(goconfig.ReadString("processing.postparam.mm", "1", "2", "3", "4"))
 }

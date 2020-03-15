@@ -43,6 +43,7 @@ type config struct {
 }
 
 var Config *config
+var Deep = 3
 var tp string = "ini"
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
