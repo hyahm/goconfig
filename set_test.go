@@ -41,7 +41,8 @@ db = project
 `
 
 func TestSet(t *testing.T) {
-	InitConf("test.ini")
+	t.Log("start test write profile to ini file")
+	InitConf("test.ini", INI)
 	WriteBool("httpproxy", true, "是否使用了代码，为了获取ip，可能不起作用")
 	WriteBool("initdb", true, "自动初始化数据库（为了减少启动时间，第一次初始化完成就关掉")
 	WriteString("listenaddr", ":10001", "监听地址")

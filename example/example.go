@@ -19,7 +19,7 @@ func main() {
 	// goconfig.InitWriteConf("test.conf")
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 	// goconfig.FlushWrite()
-	if err := goconfig.InitConf("test.json", "json"); err != nil {
+	if err := goconfig.InitConf("test.json", goconfig.JSON); err != nil {
 		log.Fatal(err)
 	}
 

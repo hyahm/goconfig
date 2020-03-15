@@ -2,12 +2,9 @@ package goconfig
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	"sigs.k8s.io/yaml"
 )
 
 //const middle = "========="
@@ -44,7 +41,28 @@ type config struct {
 
 var Config *config
 var Deep = 3
-var tp string = "ini"
+var tp typ
+
+type typ int
+
+const (
+	INI typ = iota
+	JSON
+	YAML
+)
+
+func (t typ) String() string {
+	switch t {
+	case 0:
+		return "ini"
+	case 1:
+		return "json"
+	case 2:
+		return "yaml"
+	default:
+		return "ini"
+	}
+}
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func Reload() error {
@@ -74,19 +92,12 @@ func Reload() error {
 		return err
 	}
 	switch tp {
-	case "json":
-		tp = "json"
+	case JSON:
 		if err := tmp.readJson(); err != nil {
 			return err
 		}
-	case "yaml":
-		tp = "yaml"
-		j, err := yaml.YAMLToJSON(Config.Read)
-		if err != nil {
-			return err
-		}
-		tmp.Read = j
-		if err := tmp.readJson(); err != nil {
+	case YAML:
+		if err := tmp.readYaml(); err != nil {
 			return err
 		}
 	default:
@@ -99,7 +110,7 @@ func Reload() error {
 	return nil
 }
 
-func InitConf(path string, typ ...string) error {
+func InitConf(path string, t typ) error {
 	fptmp := filepath.Clean(path)
 
 	//判断文件目录是否存在
@@ -122,64 +133,55 @@ func InitConf(path string, typ ...string) error {
 	if err != nil {
 		return err
 	}
-	if len(typ) > 0 {
-		switch typ[0] {
-		case "json":
-			tp = "json"
-			if err := Config.readJson(); err != nil {
-				return err
-			}
-		case "yaml":
-			tp = "yaml"
-			j, err := yaml.YAMLToJSON(Config.Read)
-			if err != nil {
-				return err
-			}
-			Config.Read = j
-			fmt.Println(string(j))
-			if err := Config.readJson(); err != nil {
-				return err
-			}
-		default:
-			if err := Config.readIni(); err != nil {
-				return err
-			}
+	switch t {
+	case JSON:
+		tp = t
+		if err := Config.readJson(); err != nil {
+			return err
+		}
+	case YAML:
+		tp = t
+		if err := Config.readYaml(); err != nil {
+			return err
+		}
+	default:
+		if err := Config.readIni(); err != nil {
+			return err
 		}
 	}
+
 	return nil
 }
 
 // 从bytes 解析， Reload方法
-func InitFromBytes(data []byte, typ ...string) error {
+func InitFromBytes(data []byte, t typ) error {
 
 	Config = &config{
 		Lines:    make([]node, 0),
 		KeyValue: make(map[string]string),
 	}
 	Config.Read = data
-	if len(typ) > 0 {
-		switch typ[0] {
-		case "json":
-			tp = "json"
-		case "yaml":
-			tp = "yaml"
-			j, err := yaml.JSONToYAML(Config.Read)
-			if err != nil {
-				return err
-			}
-			Config.Read = j
-
-		default:
-			if err := Config.readIni(); err != nil {
-				return err
-			}
+	switch t {
+	case JSON:
+		tp = t
+		if err := Config.readJson(); err != nil {
+			return err
+		}
+	case YAML:
+		tp = t
+		if err := Config.readYaml(); err != nil {
+			return err
+		}
+	default:
+		if err := Config.readIni(); err != nil {
+			return err
 		}
 	}
 	return nil
 }
 
 // 初始化写入文件的方法， 会清空内容
-func InitWriteConf(configpath string, typ ...string) {
+func InitWriteConf(configpath string, t typ) {
 
 	fptmp := filepath.Clean(configpath)
 	//判断文件目录是否存在
@@ -192,14 +194,12 @@ func InitWriteConf(configpath string, typ ...string) {
 	}
 	os.Remove(fptmp)
 
-	if len(typ) > 0 {
-		switch typ[0] {
-		case "json":
-			tp = "json"
-		case "yaml":
-			tp = "json"
-		default:
-		}
+	switch t {
+	case JSON:
+		tp = t
+	case YAML:
+		tp = t
+	default:
 	}
 
 	Config = &config{

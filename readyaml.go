@@ -1,14 +1,17 @@
 package goconfig
 
-import "encoding/json"
+import (
+	"sigs.k8s.io/yaml"
+)
 
 func (c *config) readYaml() error {
 
-	err := json.Unmarshal(c.Read, &c.sjson)
+	j, err := yaml.YAMLToJSON(c.Read)
 	if err != nil {
 		return err
 	}
-	if err := c.parseJson("", c.sjson); err != nil {
+	c.Read = j
+	if err := c.readJson(); err != nil {
 		return err
 	}
 
