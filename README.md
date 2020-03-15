@@ -47,7 +47,11 @@ mysql:
 ```
 ```
 第一个参数后面表示默认值，默认支持长度为3， 如果不存在key， 或者读取的值不符合读取类型的默认值
-goconfig.InitConf("test.conf")
+goconfig.InitConf("test.ini", goconfig.INI)
+or
+goconfig.InitConf("test.json", goconfig.JSON) 
+or
+goconfig.InitConf("test.yaml", goconfig.YAML) 
 goconfig.ReadString("mysql.host", "127.0.0.1") // return 192.168.80.2
 goconfig.ReadInt("mysql.port", 3306)    // return 3306
 goconfig.ReadString("mysql.db", "name")    // return name
@@ -72,7 +76,7 @@ goconfig.ReadString("mysql.db", "name")    // return name
 ```
 ### 写入配置文件
 ```
-goconfig.InitWriteConf("write.conf")  // 与InitConf的区别是， 这个会清空里面原有数据
+goconfig.InitWriteConf("write.conf", goconfig.INI)  // 与InitConf的区别是， 这个会清空里面原有数据
 goconfig.InitConf("test.conf")  // 原有配置文件添加
 goconfig.WriteString("mysql.host", "127.0.0.1","mysql数据库host") 
 goconfig.WriteInt("mysql.port", 3306)   
