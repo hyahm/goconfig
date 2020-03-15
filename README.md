@@ -19,6 +19,7 @@ NOTE        = "#;" // #开头的为注释
 MODEL_START = "["  // 模块开头符号
 MODEL_END   = "]"  // 模块结尾符号
 WELL        = "#"  // 写入的注释， 
+Deep   // 默认值有效个数， 默认为3
 ```
 
 
@@ -50,6 +51,9 @@ goconfig.InitConf("test.conf")
 goconfig.ReadString("mysql.host", "127.0.0.1") // return 192.168.80.2
 goconfig.ReadInt("mysql.port", 3306)    // return 3306
 goconfig.ReadString("mysql.db", "name")    // return name
+goconfig.ReadString("mysql.deep", "one", "two", "three")    // return one
+goconfig.ReadString("mysql.deep", "", "two", "three")    // return two
+goconfig.ReadString("mysql.deep", "", "", "three")    // return three
 ```
 
 
