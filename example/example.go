@@ -26,6 +26,7 @@ func main() {
 	// goconfig.InitConf("write.conf") // 与InitConf的区别是， 这个会清空里面原有数据
 	// goconfig.PrintKeyValue()
 	fmt.Println(goconfig.ReadBool("episode.ended"))
+	fmt.Println(goconfig.ReadDuration("timeout"))
 	fmt.Println(goconfig.ReadString("processing.postparam.thumb_hor"))
 	fmt.Println(goconfig.ReadString("processing.postparam.mm", "1", "2", "3", "4"))
 }

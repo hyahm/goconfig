@@ -278,14 +278,13 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 			break
 		}
 	}
+
 	if _, ok := Config.KeyValue[key]; !ok {
 		return this
 	}
-	i, err := strconv.ParseInt(string(Config.KeyValue[key]), 10, 64)
-	if err != nil {
-		return this
-	}
-	return time.Duration(i)
+	this, _ = dr(Config.KeyValue[key]).Duration()
+
+	return this
 }
 
 // 末尾不带/
