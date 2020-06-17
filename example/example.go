@@ -2,38 +2,53 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/hyahm/goconfig"
-	"github.com/hyahm/golog"
 )
 
+type p struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+type ftp struct {
+	On      bool   `json:"on"`
+	Key     string `json:"key"`
+	FtpRoot string `json:"ftp_root"`
+}
+
 type user struct {
-	On             bool   `json:"on"`
-	Key            string `json:"key"`
-	redis_host     string `json:"redis_host"`
-	redis_password string `json:"redis_password"`
-	redis_db       int    `json:"redis_db"`
+	On            bool     `json:"on"`
+	Key           string   `json:"key"`
+	RedisHost     string   `json:"redis_host"`
+	RedisPassword string   `json:"redis_password"`
+	RedisDb       int      `json:"redis_db"`
+	People        *p       `json:"people"`
+	Kps           []string `json:"kps"`
 }
 
 func main() {
 	// 初始化配置文件
 
-	// goconfig.InitWriteConf("test.conf")
+	goconfig.InitConf("client.ini", goconfig.INI)
+	ok := goconfig.UpdateValue("u5.redis_download.on", "false")
+	fmt.Println(ok)
+	fmt.Println("----------------------------------")
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
-	// goconfig.FlushWrite()
-	if err := goconfig.InitConf("client.ini", goconfig.INI); err != nil {
-		log.Fatal(err)
-	}
-	u5 := make([]*user, 0)
-	err := goconfig.ReadArrayBytes("u5", &u5)
-	if err != nil {
-		golog.Error(err)
-	}
-	for _, v := range u5 {
-		fmt.Printf("%+v", v)
-	}
-	fmt.Println(u5)
+
+	// // goconfig.FlushWrite()
+	// if err := goconfig.InitConf("client.ini", goconfig.INI); err != nil {
+	// 	log.Fatal(err)
+	// }
+	// u5 := make([]*user, 0)
+	// err := goconfig.ReadArrayFromNode("u5", &u5)
+	// if err != nil {
+	// 	golog.Error(err)
+	// }
+	// for _, v := range u5 {
+	// 	fmt.Printf("%+v", v)
+	// }
+	// fmt.Println(u5)
 	// // goconfig.InitConf("write.conf") // 与InitConf的区别是， 这个会清空里面原有数据
 	// // goconfig.PrintKeyValue()
 	// fmt.Println(goconfig.ReadBool("u5.redis_download.on"))
@@ -43,4 +58,5 @@ func main() {
 	// json.Unmarshal(goconfig.ReadBytes("u5.redis_download.pks"), &l)
 	// goconfig.PrintKeyValue()
 	// fmt.Println(l)
+	// log.Fatal(goconfig.Start())
 }
