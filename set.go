@@ -23,16 +23,16 @@ func update(key, value string, notes ...string) {
 		subkey = key
 	}
 
-	if _, ok := Config.KeyValue[key]; !ok {
+	if _, ok := kvconfig.KeyValue[key]; !ok {
 		// 更新文件
 		writeFile(subkey, value, module, notes...)
 		// 更新map
-		Config.KeyValue[key] = value
+		kvconfig.KeyValue[key] = value
 	}
 }
 
 func WriteFloat(key string, value float64, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s1 := strconv.FormatFloat(value, 'E', -1, 64)
@@ -41,7 +41,7 @@ func WriteFloat(key string, value float64, notes ...string) {
 }
 
 func WriteString(key string, value string, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	update(key, value, notes...)
@@ -50,7 +50,7 @@ func WriteString(key string, value string, notes ...string) {
 
 // 返回int
 func WriteInt(key string, value int, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s := strconv.Itoa(value)
@@ -59,7 +59,7 @@ func WriteInt(key string, value int, notes ...string) {
 }
 
 func WriteUint64(key string, value uint64, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s := strconv.FormatUint(value, 10)
@@ -68,7 +68,7 @@ func WriteUint64(key string, value uint64, notes ...string) {
 
 // 2边需要用到引号
 func WritePassword(key string, value string, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s := fmt.Sprintf(`"%s"`, value)
@@ -76,7 +76,7 @@ func WritePassword(key string, value string, notes ...string) {
 }
 
 func WriteBool(key string, value bool, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s := "false"
@@ -87,7 +87,7 @@ func WriteBool(key string, value bool, notes ...string) {
 }
 
 func WriteInt64(key string, value int64, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	s := strconv.FormatInt(value, 10)
@@ -96,7 +96,7 @@ func WriteInt64(key string, value int64, notes ...string) {
 }
 
 func WriteBytes(key string, value []byte, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
 	update(key, string(value), notes...)
@@ -104,14 +104,14 @@ func WriteBytes(key string, value []byte, notes ...string) {
 }
 
 func WriteNotesForModule(name string, notes ...string) {
-	if Config == nil {
+	if kvconfig == nil {
 		panic("init first")
 	}
-	for _, v := range Config.Groups {
+	for _, v := range kvconfig.Groups {
 		if string(v.name) == name {
 			v.note = append(v.note, notes...)
 			return
 		}
 	}
-	Config.newGroup(name, notes...)
+	kvconfig.newGroup(name, notes...)
 }

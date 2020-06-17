@@ -51,7 +51,7 @@ func classification(line []byte) error {
 		if _, ok := module_filter[string(module_name)]; ok {
 			return errors.New(fmt.Sprintf("group %s Repetition", string(module_name)))
 		}
-		Config.newGroup(string(module_name), notes...)
+		kvconfig.newGroup(string(module_name), notes...)
 		notes = nil
 		module_filter[string(module_name)] = true
 		return nil
@@ -70,7 +70,7 @@ func classification(line []byte) error {
 		if err != nil {
 			return err
 		}
-		Config.newKeyValue(k, string(v), notes...)
+		kvconfig.newKeyValue(k, string(v), notes...)
 		notes = nil
 	} else {
 		// 组
@@ -83,10 +83,10 @@ func classification(line []byte) error {
 		if err != nil {
 			return err
 		}
-		for i, g := range Config.Groups {
+		for i, g := range kvconfig.Groups {
 			//在组里面就添加
 			if string(g.name) == string(module_name) {
-				Config.addGroupKeyValue(i, k, string(v), notes...)
+				kvconfig.addGroupKeyValue(i, k, string(v), notes...)
 				notes = nil
 				return nil
 			}
@@ -118,12 +118,11 @@ func getKeyValue(line []byte) (string, []byte, error) {
 	if string(module_name) != "" {
 		k = string(module_name) + "." + k
 	}
-	if _, ok := Config.KeyValue[k]; ok {
+	if _, ok := kvconfig.KeyValue[k]; ok {
 		// 去掉重复项
 		fmt.Println(fmt.Sprintf("key duplicate, key: %s", string(key)))
 		return "", nil, nil
 	}
-
-	Config.KeyValue[k] = string(value)
+	kvconfig.KeyValue[k] = string(value)
 	return string(key), value, nil
 }

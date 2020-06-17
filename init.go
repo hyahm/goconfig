@@ -30,16 +30,16 @@ type groupLine struct {
 
 // 这个是ini的config
 type config struct {
-	Groups   []groupLine       // 组
-	Lines    []node            // 单key
+	Groups   []*groupLine      // 组
+	Lines    []*node           // 单key
 	Read     []byte            // 文件读出来的所有内容
 	Write    []byte            // 文件写的所有内容
-	KeyValue map[string]string // 键值缓存， key的值  key or group.key
+	KeyValue map[string]string // 键值缓存， key value的值  key or group.key
 	Filepath string            // 配置文件路径
 	sjson    map[string]interface{}
 }
 
-var Config *config
+var kvconfig *config
 var Deep = 3
 var tp typ
 
@@ -66,14 +66,14 @@ func (t typ) String() string {
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func Reload() error {
-	Config = nil
+	kvconfig = nil
 
-	file := Config.Filepath
+	file := kvconfig.Filepath
 	if file == "" {
 		return errors.New("not found config")
 	}
 	//判断文件目录是否存在
-	_, err := os.Stat(Config.Filepath)
+	_, err := os.Stat(kvconfig.Filepath)
 	if err != nil {
 		// 不存在就先创建目录
 		return err
@@ -84,7 +84,7 @@ func Reload() error {
 	// 检查是否有错
 	tmp := &config{
 		Filepath: file,
-		Lines:    make([]node, 0),
+		Lines:    make([]*node, 0),
 		KeyValue: make(map[string]string),
 	}
 	tmp.Read, err = ioutil.ReadFile(file)
@@ -105,7 +105,7 @@ func Reload() error {
 			return err
 		}
 	}
-	Config = tmp
+	kvconfig = tmp
 	// 更新值
 	return nil
 }
@@ -124,28 +124,28 @@ func InitConf(path string, t typ) error {
 	}
 	// 创建文件
 	os.OpenFile(fptmp, os.O_CREATE, 0644)
-	Config = &config{
+	kvconfig = &config{
 		Filepath: fptmp,
-		Lines:    make([]node, 0),
+		Lines:    make([]*node, 0),
 		KeyValue: make(map[string]string),
 	}
-	Config.Read, err = ioutil.ReadFile(fptmp)
+	kvconfig.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
 		return err
 	}
 	switch t {
 	case JSON:
 		tp = t
-		if err := Config.readJson(); err != nil {
+		if err := kvconfig.readJson(); err != nil {
 			return err
 		}
 	case YAML:
 		tp = t
-		if err := Config.readYaml(); err != nil {
+		if err := kvconfig.readYaml(); err != nil {
 			return err
 		}
 	default:
-		if err := Config.readIni(); err != nil {
+		if err := kvconfig.readIni(); err != nil {
 			return err
 		}
 	}
@@ -156,24 +156,24 @@ func InitConf(path string, t typ) error {
 // 从bytes 解析， Reload方法
 func InitFromBytes(data []byte, t typ) error {
 
-	Config = &config{
-		Lines:    make([]node, 0),
+	kvconfig = &config{
+		Lines:    make([]*node, 0),
 		KeyValue: make(map[string]string),
 	}
-	Config.Read = data
+	kvconfig.Read = data
 	switch t {
 	case JSON:
 		tp = t
-		if err := Config.readJson(); err != nil {
+		if err := kvconfig.readJson(); err != nil {
 			return err
 		}
 	case YAML:
 		tp = t
-		if err := Config.readYaml(); err != nil {
+		if err := kvconfig.readYaml(); err != nil {
 			return err
 		}
 	default:
-		if err := Config.readIni(); err != nil {
+		if err := kvconfig.readIni(); err != nil {
 			return err
 		}
 	}
@@ -202,9 +202,9 @@ func InitWriteConf(configpath string, t typ) {
 	default:
 
 	}
-	Config = &config{
+	kvconfig = &config{
 		Filepath: configpath,
-		Lines:    make([]node, 0),
+		Lines:    make([]*node, 0),
 		KeyValue: make(map[string]string),
 	}
 }

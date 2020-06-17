@@ -1,0 +1,7 @@
+
+var name string
+err = Read("server.listen", &name)
+fmt.Println(name)
+
+------------------
+:9090
