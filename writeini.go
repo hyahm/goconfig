@@ -27,12 +27,14 @@ func writeFile(key, value, module string, notes ...string) {
 
 func FlushWrite() {
 	content := getWrite()
+	fmt.Println(string(content))
 	if err := ioutil.WriteFile(kvconfig.Filepath, content, 0644); err != nil {
 		panic(err)
 	}
 }
 
 func getWrite() []byte {
+	kvconfig.Write = nil
 	for _, v := range kvconfig.Lines {
 		// 打印注释
 		for _, n := range v.note {

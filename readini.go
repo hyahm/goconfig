@@ -120,8 +120,7 @@ func getKeyValue(line []byte) (string, []byte, error) {
 	}
 	if _, ok := kvconfig.KeyValue[k]; ok {
 		// 去掉重复项
-		fmt.Println(fmt.Sprintf("key duplicate, key: %s", string(key)))
-		return "", nil, nil
+		return "", nil, errors.New(fmt.Sprintf("key duplicate, key: %s", string(key)))
 	}
 	kvconfig.KeyValue[k] = string(value)
 	return string(key), value, nil

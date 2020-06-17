@@ -1,10 +1,6 @@
 package main
 
-import (
-	"fmt"
-
-	"github.com/hyahm/goconfig"
-)
+import "github.com/hyahm/goconfig"
 
 type p struct {
 	Name string `json:"name"`
@@ -27,13 +23,20 @@ type user struct {
 	Kps           []string `json:"kps"`
 }
 
+type ttt struct {
+	key   string
+	value string
+	note  []string
+}
+
 func main() {
 	// 初始化配置文件
 
 	goconfig.InitConf("client.ini", goconfig.INI)
-	ok := goconfig.UpdateValue("u5.redis_download.on", "false")
-	fmt.Println(ok)
-	fmt.Println("----------------------------------")
+	goconfig.UpdateValue("server.always", "true")
+	goconfig.PrintKeyValue()
+	goconfig.UpdateValue("me", "true")
+
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 
 	// // goconfig.FlushWrite()
