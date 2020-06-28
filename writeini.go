@@ -27,7 +27,6 @@ func writeFile(key, value, module string, notes ...string) {
 
 func FlushWrite() {
 	content := getWrite()
-	fmt.Println(string(content))
 	if err := ioutil.WriteFile(kvconfig.Filepath, content, 0644); err != nil {
 		panic(err)
 	}

@@ -3,7 +3,6 @@ package goconfig
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 	"strings"
@@ -94,7 +93,6 @@ func (c *config) parseJson(module string, value map[string]interface{}) error {
 		case reflect.Slice:
 			//
 			b, _ := json.Marshal(refValue.Interface())
-			fmt.Println(string(b))
 			if module == "" {
 				c.KeyValue[k] = string(b)
 			} else {

@@ -1,7 +1,6 @@
 package goconfig
 
 import (
-	"fmt"
 	"strings"
 )
 
@@ -56,7 +55,6 @@ func UpdateValue(key string, value string, notes ...string) bool {
 		}
 		// 不存在的话
 		kvconfig.newKeyValue(key, value, notes...)
-		fmt.Println(kvconfig.Lines)
 
 	}
 	return false
