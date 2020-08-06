@@ -17,7 +17,7 @@ import (
 
 func ReadFloat64(key string, value ...float64) float64 {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	// key 不能包含多个.
 	var this float64
@@ -49,7 +49,7 @@ func ReadFloat64(key string, value ...float64) float64 {
 
 func ReadFile(key string, value ...string) string {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this string
 	for i, v := range value {
@@ -75,7 +75,7 @@ func ReadFile(key string, value ...string) string {
 
 func ReadString(key string, value ...string) string {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this string
 	for i, v := range value {
@@ -98,7 +98,7 @@ func ReadString(key string, value ...string) string {
 // 返回int
 func ReadInt(key string, value ...int) int {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this int
 	for i, v := range value {
@@ -125,7 +125,7 @@ func ReadInt(key string, value ...int) int {
 
 func ReadUint64(key string, value ...uint64) uint64 {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this uint64
 	for i, v := range value {
@@ -153,7 +153,7 @@ func ReadUint64(key string, value ...uint64) uint64 {
 // 2边需要用到引号
 func ReadPassword(key string, value ...string) string {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this string
 	for i, v := range value {
@@ -174,14 +174,14 @@ func ReadPassword(key string, value ...string) string {
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
-		return ReadString(this)
+		return ReadString(key, this)
 	}
 	return string(v[1 : l-1])
 }
 
 func ReadBool(key string, value ...bool) bool {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this bool
 	for i, v := range value {
@@ -213,7 +213,7 @@ func ReadBool(key string, value ...bool) bool {
 
 func ReadInt64(key string, value ...int64) int64 {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this int64
 	for i, v := range value {
@@ -240,7 +240,7 @@ func ReadInt64(key string, value ...int64) int64 {
 
 func ReadBytes(key string, value ...[]byte) []byte {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this []byte
 	for i, v := range value {
@@ -269,7 +269,7 @@ func ReadEnv(key string, value ...string) (s string) {
 
 func ReadDuration(key string, value ...time.Duration) time.Duration {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this time.Duration
 	for i, v := range value {
@@ -294,7 +294,7 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 // 末尾不带/
 func ReadWithoutEndSlash(key string, value ...string) string {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this string
 	for i, v := range value {
@@ -329,7 +329,7 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 // 末尾带/
 func ReadWithEndSlash(key string, value ...string) string {
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 	var this string
 	for i, v := range value {
@@ -387,7 +387,7 @@ func ReadStructFromNode(key string, value interface{}) error {
 	}
 	// 得到一定是个数组类似： [ {"name": "a"}, {"name":"b"}]
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 
 	return walkNode(key, keys, value)
@@ -433,7 +433,7 @@ func ReadArrayFromNode(key string, value interface{}) error {
 	}
 	// 得到一定是个数组类似： [ {"name": "a"}, {"name":"b"}]
 	if kvconfig == nil {
-		panic("init first")
+		panic("init config file first")
 	}
 
 	return walkNode(key, keys, value)
