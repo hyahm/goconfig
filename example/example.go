@@ -1,6 +1,9 @@
 package main
 
-import "github.com/hyahm/goconfig"
+import (
+	"github.com/hyahm/goconfig"
+	"github.com/hyahm/golog"
+)
 
 type p struct {
 	Name string `json:"name"`
@@ -33,9 +36,7 @@ func main() {
 	// 初始化配置文件
 
 	goconfig.InitConf("client.ini", goconfig.INI)
-	goconfig.UpdateValue("server.always", "true")
-	goconfig.PrintKeyValue()
-	goconfig.UpdateValue("me", "true")
+	golog.Info(goconfig.ReadPassword("aaa", "true"))
 
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 
