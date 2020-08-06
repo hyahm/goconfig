@@ -174,7 +174,7 @@ func ReadPassword(key string, value ...string) string {
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
-		return this
+		return ReadString(this)
 	}
 	return string(v[1 : l-1])
 }
@@ -448,7 +448,7 @@ func walkNode(key string, keys map[string]*asset, value interface{}) error {
 	fmt.Println("---------------")
 	// 先获取所有数组的key
 	skey := make(map[string]int)
-	for k, _ := range kvconfig.KeyValue {
+	for k := range kvconfig.KeyValue {
 		if k[:l+1] == key+"." {
 			endkey := k[l+1:]
 			index := strings.Index(endkey, ".")
@@ -462,7 +462,7 @@ func walkNode(key string, keys map[string]*asset, value interface{}) error {
 	fmt.Println(skey)
 	jsonStr := "["
 	// 根据key 获取值拼接字符串
-	for k, _ := range skey {
+	for k := range skey {
 		jsonStr += "{"
 		for lk, ass := range keys {
 			nodeKey := fmt.Sprintf("%s.%s.%s", key, k, lk)
