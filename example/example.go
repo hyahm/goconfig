@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/hyahm/goconfig"
-	"github.com/hyahm/golog"
 )
 
 type p struct {
@@ -36,7 +35,6 @@ func main() {
 	// 初始化配置文件
 
 	goconfig.InitConf("client.ini", goconfig.INI)
-	golog.Info(goconfig.ReadPassword("aaa", "true"))
 
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 
