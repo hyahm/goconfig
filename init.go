@@ -123,7 +123,9 @@ func InitConf(path string, t typ) error {
 
 	}
 	// 创建文件
-	os.OpenFile(fptmp, os.O_CREATE, 0644)
+	if _, err = os.OpenFile(fptmp, os.O_CREATE, 0644); err != nil {
+		return err
+	}
 	kvconfig = &config{
 		Filepath: fptmp,
 		Lines:    make([]*node, 0),
