@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"reflect"
 	"strconv"
 	"strings"
@@ -71,6 +72,11 @@ func ReadFile(key string, value ...string) string {
 		return ""
 	}
 	return string(bs)
+}
+
+func ReadPath(key string, value ...string) string {
+	val := ReadString(key, value...)
+	return filepath.Clean(val)
 }
 
 func ReadString(key string, value ...string) string {

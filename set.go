@@ -2,6 +2,7 @@ package goconfig
 
 import (
 	"fmt"
+	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -45,7 +46,14 @@ func WriteString(key string, value string, notes ...string) {
 		panic("init first")
 	}
 	update(key, value, notes...)
+}
 
+func WritePath(key string, value string, notes ...string) {
+	if kvconfig == nil {
+		panic("init first")
+	}
+	value = filepath.Clean(value)
+	update(key, value, notes...)
 }
 
 // 返回int

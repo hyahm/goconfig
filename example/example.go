@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/hyahm/goconfig"
 )
 
@@ -35,7 +37,8 @@ func main() {
 	// 初始化配置文件
 
 	goconfig.InitConf("client.ini", goconfig.INI)
-
+	p := goconfig.ReadPath("aaaa", "/bbb/ccc")
+	fmt.Println(p)
 	// goconfig.WriteInt("aaa.bbb.ccc", 5)
 
 	// // goconfig.FlushWrite()
