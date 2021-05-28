@@ -30,7 +30,11 @@ func PrintLines() {
 }
 
 func PrintKeyValue() {
-	for k, v := range kvconfig.KeyValue {
+	// for k, v := range kvconfig.KeyValue {
+	// 	fmt.Println(k, ":", string(v))
+	// }
+
+	for k, v := range kvconfig.env {
 		fmt.Println(k, ":", string(v))
 	}
 }

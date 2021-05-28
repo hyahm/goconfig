@@ -40,6 +40,11 @@ func ReadFloat64(key string, value ...float64) float64 {
 		kvconfig.KeyValue[key] = str
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	f64, err := strconv.ParseFloat(kvconfig.KeyValue[key], 64)
 	if err != nil {
 		return this
@@ -48,9 +53,6 @@ func ReadFloat64(key string, value ...float64) float64 {
 }
 
 func ReadFile(key string, value ...string) string {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this string
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -64,6 +66,11 @@ func ReadFile(key string, value ...string) string {
 	}
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		kvconfig.KeyValue[key] = this
+	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
 	}
 	// 读取文件
 	bs, err := ioutil.ReadFile(kvconfig.KeyValue[key])
@@ -74,9 +81,6 @@ func ReadFile(key string, value ...string) string {
 }
 
 func ReadString(key string, value ...string) string {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this string
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -88,18 +92,21 @@ func ReadString(key string, value ...string) string {
 			break
 		}
 	}
+
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		kvconfig.KeyValue[key] = this
 		return this
+	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
 	}
 	return kvconfig.KeyValue[key]
 }
 
 // 返回int
 func ReadInt(key string, value ...int) int {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this int
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -115,6 +122,11 @@ func ReadInt(key string, value ...int) int {
 		str := strconv.Itoa(this)
 		kvconfig.KeyValue[key] = str
 		return this
+	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
 	}
 	i, err := strconv.Atoi(string(kvconfig.KeyValue[key]))
 	if err != nil {
@@ -143,6 +155,11 @@ func ReadUint64(key string, value ...uint64) uint64 {
 		kvconfig.KeyValue[key] = str
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	i, err := strconv.ParseUint(kvconfig.KeyValue[key], 10, 64)
 	if err != nil {
 		return this
@@ -152,9 +169,6 @@ func ReadUint64(key string, value ...uint64) uint64 {
 
 // 2边需要用到引号
 func ReadPassword(key string, value ...string) string {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this string
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -170,6 +184,11 @@ func ReadPassword(key string, value ...string) string {
 		kvconfig.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	v := kvconfig.KeyValue[key]
 	// 如果头尾不是"
 	l := len(v)
@@ -180,9 +199,6 @@ func ReadPassword(key string, value ...string) string {
 }
 
 func ReadBool(key string, value ...bool) bool {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this bool
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -202,6 +218,11 @@ func ReadBool(key string, value ...bool) bool {
 		}
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	if string(kvconfig.KeyValue[key]) == "true" {
 		return true
 	} else if string(kvconfig.KeyValue[key]) == "false" {
@@ -212,9 +233,6 @@ func ReadBool(key string, value ...bool) bool {
 }
 
 func ReadInt64(key string, value ...int64) int64 {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this int64
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -231,6 +249,11 @@ func ReadInt64(key string, value ...int64) int64 {
 		kvconfig.KeyValue[key] = str
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	i, err := strconv.ParseInt(string(kvconfig.KeyValue[key]), 10, 64)
 	if err != nil {
 		return this
@@ -239,9 +262,6 @@ func ReadInt64(key string, value ...int64) int64 {
 }
 
 func ReadBytes(key string, value ...[]byte) []byte {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this []byte
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -256,6 +276,11 @@ func ReadBytes(key string, value ...[]byte) []byte {
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	return []byte(kvconfig.KeyValue[key])
 }
 
@@ -268,9 +293,6 @@ func ReadEnv(key string, value ...string) (s string) {
 }
 
 func ReadDuration(key string, value ...time.Duration) time.Duration {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this time.Duration
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -286,6 +308,11 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	this, _ = dr(kvconfig.KeyValue[key]).Duration()
 
 	return this
@@ -293,9 +320,6 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 
 // 末尾不带/
 func ReadWithoutEndSlash(key string, value ...string) string {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this string
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -316,6 +340,11 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		return this
 	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
+	}
 	this = kvconfig.KeyValue[key]
 	if this != "" {
 		l := len(this)
@@ -328,9 +357,6 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 
 // 末尾带/
 func ReadWithEndSlash(key string, value ...string) string {
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 	var this string
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
@@ -350,6 +376,11 @@ func ReadWithEndSlash(key string, value ...string) string {
 	}
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		return this
+	}
+	if strings.Contains(kvconfig.KeyValue[key], "${") {
+		for k, v := range kvconfig.env {
+			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
+		}
 	}
 	this = kvconfig.KeyValue[key]
 	if this != "" {
@@ -386,9 +417,6 @@ func ReadStructFromNode(key string, value interface{}) error {
 		return errors.New("use ReadArrayBytes Function, the array value must be a struct point or struct ")
 	}
 	// 得到一定是个数组类似： [ {"name": "a"}, {"name":"b"}]
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 
 	return walkNode(key, keys, value)
 }
@@ -416,7 +444,7 @@ func ReadArrayFromNode(key string, value interface{}) error {
 	} else {
 		return errors.New("use ReadArrayBytes Function, the array value must be a struct point or struct ")
 	}
-	keys := make(map[string]*asset, 0)
+	keys := make(map[string]*asset)
 	for i := 0; i < s.NumField(); i++ {
 		// 这个key 就是ini中的key
 		key := strings.Split(s.Field(i).Tag.Get("json"), ",")[0]
@@ -432,9 +460,6 @@ func ReadArrayFromNode(key string, value interface{}) error {
 		return errors.New("use ReadArrayBytes Function, the array value must be a struct point or struct ")
 	}
 	// 得到一定是个数组类似： [ {"name": "a"}, {"name":"b"}]
-	if kvconfig == nil {
-		panic("init config file first")
-	}
 
 	return walkNode(key, keys, value)
 }
@@ -445,7 +470,6 @@ func walkNode(key string, keys map[string]*asset, value interface{}) error {
 	// eg:   u5.aaa.bbb.ccc   key=u5 key. =u5.  后缀: aaa.bbb.ccc
 	// key和 keys 中间一级是array的分隔符
 	// 最后拼成的字符串应该是这个 [{"xxxx":"yyyy", "aaaa": "name"},{"xxxx":"zzzz", "aaaa": "nnnn"}]
-	fmt.Println("---------------")
 	// 先获取所有数组的key
 	skey := make(map[string]int)
 	for k := range kvconfig.KeyValue {

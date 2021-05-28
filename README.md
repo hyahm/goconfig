@@ -9,6 +9,7 @@ go get github.com/hyahm/goconfig
 - 支持读取任何单行配置文件
 - 自定义符号
 - 支持写入配置文件
+- 支持变量
 
 # 使用
 
@@ -26,9 +27,11 @@ Deep   // 默认值有效个数， 默认为3
 ### 读取配置
 > test.ini
 ```vim
+$var="I am a variable value"
 [mysql]
 host=192.168.80.2
-port=name
+port=name${var}
+name=name${var}
 ```
 > test.json
 ```json
@@ -58,6 +61,8 @@ goconfig.ReadString("mysql.db", "name")    // return name
 goconfig.ReadString("mysql.deep", "one", "two", "three")    // return one
 goconfig.ReadString("mysql.deep", "", "two", "three")    // return two
 goconfig.ReadString("mysql.deep", "", "", "three")    // return three
+goconfig.ReadString("mysql.name", "") // return nameI am a variable value
+goconfig.ReadString("var", "") // return I am a variable value
 ```
 
 

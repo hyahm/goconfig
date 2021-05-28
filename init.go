@@ -35,10 +35,12 @@ type config struct {
 	Read     []byte            // 文件读出来的所有内容
 	Write    []byte            // 文件写的所有内容
 	KeyValue map[string]string // 键值缓存， key value的值  key or group.key
-	Filepath string            // 配置文件路径
+	env      map[string]string
+	Filepath string // 配置文件路径
 	sjson    map[string]interface{}
 }
 
+//  保存配置的文件
 var kvconfig *config
 var Deep = 3
 var tp typ
@@ -85,7 +87,9 @@ func Reload() error {
 	tmp := &config{
 		Filepath: file,
 		Lines:    make([]*node, 0),
+		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
+		env:      make(map[string]string),
 	}
 	tmp.Read, err = ioutil.ReadFile(file)
 	if err != nil {
@@ -129,7 +133,9 @@ func InitConf(path string, t typ) error {
 	kvconfig = &config{
 		Filepath: fptmp,
 		Lines:    make([]*node, 0),
+		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
+		env:      make(map[string]string),
 	}
 	kvconfig.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
@@ -157,10 +163,11 @@ func InitConf(path string, t typ) error {
 
 // 从bytes 解析， Reload方法
 func InitFromBytes(data []byte, t typ) error {
-
 	kvconfig = &config{
 		Lines:    make([]*node, 0),
+		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
+		env:      make(map[string]string),
 	}
 	kvconfig.Read = data
 	switch t {
@@ -207,15 +214,8 @@ func InitWriteConf(configpath string, t typ) {
 	kvconfig = &config{
 		Filepath: configpath,
 		Lines:    make([]*node, 0),
+		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
+		env:      make(map[string]string),
 	}
 }
-
-//
-// func InitBytes() {
-// 	Config = &config{
-// 		Filepath: "",
-// 		Lines:    make([]node, 0),
-// 		KeyValue: make(map[string]string),
-// 	}
-// }
