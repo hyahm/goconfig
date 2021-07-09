@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"sync"
 )
 
 //const middle = "========="
@@ -38,6 +39,7 @@ type config struct {
 	env      map[string]string
 	Filepath string // 配置文件路径
 	sjson    map[string]interface{}
+	mu       *sync.RWMutex
 }
 
 //  保存配置的文件
@@ -68,7 +70,6 @@ func (t typ) String() string {
 
 // 读取配置文件到全局变量，并检查重复项, 重载配置文件执行这个函数
 func Reload() error {
-	kvconfig = nil
 
 	file := kvconfig.Filepath
 	if file == "" {
@@ -109,7 +110,14 @@ func Reload() error {
 			return err
 		}
 	}
-	kvconfig = tmp
+	kvconfig.mu.Lock()
+
+	kvconfig.Filepath = tmp.Filepath
+	kvconfig.Lines = tmp.Lines
+	kvconfig.Groups = tmp.Groups
+	kvconfig.KeyValue = tmp.KeyValue
+	kvconfig.env = tmp.env
+	kvconfig.mu.Unlock()
 	// 更新值
 	return nil
 }
@@ -136,6 +144,7 @@ func InitConf(path string, t typ) error {
 		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
 		env:      make(map[string]string),
+		mu:       &sync.RWMutex{},
 	}
 	kvconfig.Read, err = ioutil.ReadFile(fptmp)
 	if err != nil {
@@ -168,6 +177,7 @@ func InitFromBytes(data []byte, t typ) error {
 		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
 		env:      make(map[string]string),
+		mu:       &sync.RWMutex{},
 	}
 	kvconfig.Read = data
 	switch t {
@@ -217,5 +227,6 @@ func InitWriteConf(configpath string, t typ) {
 		Groups:   make([]*groupLine, 0),
 		KeyValue: make(map[string]string),
 		env:      make(map[string]string),
+		mu:       &sync.RWMutex{},
 	}
 }

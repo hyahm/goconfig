@@ -1,6 +1,7 @@
 package goconfig
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/hyahm/golog"
@@ -32,6 +33,7 @@ key = u5_download${server.domain}
 		Read:     []byte(x),
 		KeyValue: make(map[string]string),
 		env:      make(map[string]string),
+		mu:       &sync.RWMutex{},
 	}
 	kvconfig.readIni()
 	PrintKeyValue()

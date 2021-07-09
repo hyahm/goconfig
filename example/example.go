@@ -33,6 +33,7 @@ func main() {
 	defer golog.Sync()
 	goconfig.InitConf("client.ini", goconfig.INI)
 	m := goconfig.ReadString("u5.redis_download.key")
+	goconfig.Reload()
 	fmt.Println(m)
 	fmt.Println(goconfig.ReadInt("bbb"))
 }
