@@ -231,8 +231,6 @@ func ReadPassword(key string, value ...string) string {
 
 func ReadBool(key string, value ...bool) bool {
 	var this bool
-	kvconfig.mu.Lock()
-	defer kvconfig.mu.Unlock()
 	for i, v := range value {
 		// 最多3个， 超过了就使用默认值
 		if i == Deep {
