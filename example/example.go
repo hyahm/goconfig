@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/hyahm/goconfig"
-	"github.com/hyahm/golog"
 )
 
 type p struct {
@@ -30,7 +29,6 @@ type user struct {
 
 func main() {
 	// 初始化配置文件
-	defer golog.Sync()
 	goconfig.InitConf("client.ini", goconfig.INI)
 	m := goconfig.ReadBool("u5.redis_download.key")
 	goconfig.Reload()

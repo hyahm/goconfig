@@ -3,12 +3,9 @@ package goconfig
 import (
 	"sync"
 	"testing"
-
-	"github.com/hyahm/golog"
 )
 
 func TestRead(t *testing.T) {
-	defer golog.Sync()
 	x := `
 me = true
 aaa = 888
