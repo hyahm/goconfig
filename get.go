@@ -35,21 +35,17 @@ func ReadFloat64(key string, value ...float64) float64 {
 	if len(value) > 0 {
 		this = value[0]
 	}
-
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-
 		str := strconv.FormatFloat(this, 'E', -1, 64)
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = str
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	f64, err := strconv.ParseFloat(kvconfig.KeyValue[key], 64)
 	if err != nil {
@@ -70,17 +66,15 @@ func ReadFile(key string, value ...string) string {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = this
-		kvconfig.mu.Unlock()
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	// 读取文件
 	bs, err := ioutil.ReadFile(kvconfig.KeyValue[key])
@@ -107,19 +101,18 @@ func ReadString(key string, value ...string) string {
 			break
 		}
 	}
-
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
+
 		kvconfig.KeyValue[key] = this
-		kvconfig.mu.Unlock()
+
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	return kvconfig.KeyValue[key]
 }
@@ -137,19 +130,17 @@ func ReadInt(key string, value ...int) int {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		str := strconv.Itoa(this)
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = str
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	i, err := strconv.Atoi(string(kvconfig.KeyValue[key]))
 	if err != nil {
@@ -173,19 +164,17 @@ func ReadUint64(key string, value ...uint64) uint64 {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		str := strconv.FormatUint(this, 10)
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = str
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	i, err := strconv.ParseUint(kvconfig.KeyValue[key], 10, 64)
 	if err != nil {
@@ -207,18 +196,16 @@ func ReadPassword(key string, value ...string) string {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	v := kvconfig.KeyValue[key]
 	// 如果头尾不是"
@@ -241,22 +228,20 @@ func ReadBool(key string, value ...bool) bool {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		if this {
 			kvconfig.KeyValue[key] = "true"
 		} else {
 			kvconfig.KeyValue[key] = "false"
 		}
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	if string(kvconfig.KeyValue[key]) == "true" {
 		return true
@@ -279,19 +264,17 @@ func ReadInt64(key string, value ...int64) int64 {
 			break
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		str := strconv.FormatInt(this, 10)
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = str
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	i, err := strconv.ParseInt(string(kvconfig.KeyValue[key]), 10, 64)
 	if err != nil {
@@ -312,18 +295,17 @@ func ReadBytes(key string, value ...[]byte) []byte {
 			break
 		}
 	}
+
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = string(this)
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	return []byte(kvconfig.KeyValue[key])
 }
@@ -348,17 +330,16 @@ func ReadDuration(key string, value ...time.Duration) time.Duration {
 			break
 		}
 	}
-
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	this, _ = dr(kvconfig.KeyValue[key]).Duration()
 
@@ -384,18 +365,16 @@ func ReadWithoutEndSlash(key string, value ...string) string {
 			this = this[:l-1]
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = this
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	this = kvconfig.KeyValue[key]
 	if this != "" {
@@ -426,18 +405,16 @@ func ReadWithEndSlash(key string, value ...string) string {
 			this = this + "/"
 		}
 	}
+	kvconfig.mu.Lock()
+	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
-		kvconfig.mu.Lock()
 		kvconfig.KeyValue[key] = this
-		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
-		kvconfig.mu.Lock()
 		for k, v := range kvconfig.env {
 			kvconfig.KeyValue[key] = strings.ReplaceAll(kvconfig.KeyValue[key], "${"+k+"}", v)
 		}
-		kvconfig.mu.Unlock()
 	}
 	this = kvconfig.KeyValue[key]
 	if this != "" {
