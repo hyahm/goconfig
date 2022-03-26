@@ -29,7 +29,7 @@ type user struct {
 
 func main() {
 	// 初始化配置文件
-	goconfig.InitConf("client.ini", goconfig.INI)
+	goconfig.InitConf("client.ini")
 	m := goconfig.ReadBool("u5.redis_download.key")
 	goconfig.Reload()
 	fmt.Println(m)

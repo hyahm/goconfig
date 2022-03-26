@@ -50,9 +50,9 @@ var tp typ
 type typ int
 
 const (
-	INI typ = iota
-	JSON
-	YAML
+// INI typ = iota
+// JSON
+// YAML
 )
 
 func (t typ) String() string {
@@ -96,20 +96,20 @@ func Reload() error {
 	if err != nil {
 		return err
 	}
-	switch tp {
-	case JSON:
-		if err := tmp.readJson(); err != nil {
-			return err
-		}
-	case YAML:
-		if err := tmp.readYaml(); err != nil {
-			return err
-		}
-	default:
-		if err := tmp.readIni(); err != nil {
-			return err
-		}
+	// switch tp {
+	// case JSON:
+	// 	if err := tmp.readJson(); err != nil {
+	// 		return err
+	// 	}
+	// case YAML:
+	// 	if err := tmp.readYaml(); err != nil {
+	// 		return err
+	// 	}
+	// default:
+	if err := tmp.readIni(); err != nil {
+		return err
 	}
+	// }
 	kvconfig.mu.Lock()
 
 	kvconfig.Filepath = tmp.Filepath
@@ -122,7 +122,7 @@ func Reload() error {
 	return nil
 }
 
-func InitConf(path string, t typ) error {
+func InitConf(path string) error {
 	fptmp := filepath.Clean(path)
 
 	//判断文件目录是否存在
@@ -150,28 +150,28 @@ func InitConf(path string, t typ) error {
 	if err != nil {
 		return err
 	}
-	switch t {
-	case JSON:
-		tp = t
-		if err := kvconfig.readJson(); err != nil {
-			return err
-		}
-	case YAML:
-		tp = t
-		if err := kvconfig.readYaml(); err != nil {
-			return err
-		}
-	default:
-		if err := kvconfig.readIni(); err != nil {
-			return err
-		}
+	// switch t {
+	// case JSON:
+	// 	tp = t
+	// 	if err := kvconfig.readJson(); err != nil {
+	// 		return err
+	// 	}
+	// case YAML:
+	// 	tp = t
+	// 	if err := kvconfig.readYaml(); err != nil {
+	// 		return err
+	// 	}
+	// default:
+	if err := kvconfig.readIni(); err != nil {
+		return err
 	}
+	// }
 
 	return nil
 }
 
 // 从bytes 解析， Reload方法
-func InitFromBytes(data []byte, t typ) error {
+func InitFromBytes(data []byte) error {
 	kvconfig = &config{
 		Lines:    make([]*node, 0),
 		Groups:   make([]*groupLine, 0),
@@ -180,27 +180,27 @@ func InitFromBytes(data []byte, t typ) error {
 		mu:       &sync.RWMutex{},
 	}
 	kvconfig.Read = data
-	switch t {
-	case JSON:
-		tp = t
-		if err := kvconfig.readJson(); err != nil {
-			return err
-		}
-	case YAML:
-		tp = t
-		if err := kvconfig.readYaml(); err != nil {
-			return err
-		}
-	default:
-		if err := kvconfig.readIni(); err != nil {
-			return err
-		}
+	// switch t {
+	// case JSON:
+	// 	tp = t
+	// 	if err := kvconfig.readJson(); err != nil {
+	// 		return err
+	// 	}
+	// case YAML:
+	// 	tp = t
+	// 	if err := kvconfig.readYaml(); err != nil {
+	// 		return err
+	// 	}
+	// default:
+	if err := kvconfig.readIni(); err != nil {
+		return err
 	}
+	// }
 	return nil
 }
 
 // 初始化写入文件的方法， 会清空内容
-func InitWriteConf(configpath string, t typ) {
+func InitWriteConf(configpath string) {
 
 	fptmp := filepath.Clean(configpath)
 	//判断文件目录是否存在
@@ -213,14 +213,14 @@ func InitWriteConf(configpath string, t typ) {
 	}
 	os.Remove(fptmp)
 
-	switch t {
-	case JSON:
-		tp = t
-	case YAML:
-		tp = t
-	default:
+	// switch t {
+	// case JSON:
+	// 	tp = t
+	// case YAML:
+	// 	tp = t
+	// default:
 
-	}
+	// }
 	kvconfig = &config{
 		Filepath: configpath,
 		Lines:    make([]*node, 0),

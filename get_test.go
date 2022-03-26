@@ -28,7 +28,7 @@ password= "adlfjlskdf "
 
 func TestINI(t *testing.T) {
 	// 方便测试，
-	InitFromBytes([]byte(x), INI)
+	InitFromBytes([]byte(x))
 	tests := []getvalue{
 		{
 			title: "float64",
@@ -93,7 +93,7 @@ var y = `
 
 func TestJSON(t *testing.T) {
 	// 方便测试，
-	InitFromBytes([]byte(y), JSON)
+	InitFromBytes([]byte(y))
 	tests := []getvalue{
 		{
 			title: "float64",
@@ -153,7 +153,7 @@ two:
 
 func TestYAML(t *testing.T) {
 	// 方便测试，
-	InitFromBytes([]byte(z), YAML)
+	InitFromBytes([]byte(z))
 	tests := []getvalue{
 		{
 			title: "float64",
