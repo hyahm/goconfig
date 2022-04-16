@@ -197,9 +197,9 @@ func ReadPassword(key string, value ...string) string {
 		}
 	}
 	kvconfig.mu.Lock()
-	defer kvconfig.mu.Unlock()
 	if _, ok := kvconfig.KeyValue[key]; !ok {
 		kvconfig.KeyValue[key] = fmt.Sprintf(`"%s"`, this)
+		kvconfig.mu.Unlock()
 		return this
 	}
 	if strings.Contains(kvconfig.KeyValue[key], "${") {
@@ -208,6 +208,7 @@ func ReadPassword(key string, value ...string) string {
 		}
 	}
 	v := kvconfig.KeyValue[key]
+	kvconfig.mu.Unlock()
 	// 如果头尾不是"
 	l := len(v)
 	if string(v[0:1]) != "\"" || string(v[l-1:l]) != "\"" {
